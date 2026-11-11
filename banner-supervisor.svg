@@ -20,7 +20,7 @@
     <rect x="152" y="120" width="26" height="20" fill="#FEFEFF"/><path d="M148 121 L165 106 L182 121Z" fill="#FF8F47"/><rect x="157" y="127" width="6" height="6" fill="#79D1FF"/>
   </g>
   <path d="M0 142 C60 134 120 144 190 142 C240 140 300 148 372 142 V170 H0Z" fill="url(#lomaN)"/>
-  <path d="M0 158 C80 150 160 160 240 156 C300 154 340 158 372 156 V170 H0Z" fill="#3A4149" opacity=".2"/>
+  <path d="M0 153 C80 148 160 155 240 152 C300 150 340 153 372 152 V170 H0Z" fill="#3A4149" opacity=".42"/>
   <!-- pared y caja de medidor -->
   <rect x="322" y="0" width="50" height="170" fill="url(#pared)"/><rect x="322" y="150" width="50" height="20" fill="#F2884A"/>
   <path d="M316 0 H372 V12 Q344 14 316 22Z" fill="#FF8F47"/><path d="M316 22 Q344 14 372 12" stroke="#3A4149" stroke-width="2" fill="none" opacity=".6"/>

@@ -16,5 +16,5 @@
   <rect x="202" y="92" width="3" height="18" fill="#3A4149"/><ellipse cx="203.5" cy="86" rx="9" ry="14" fill="#FF9A55" opacity=".7"/>
   <rect x="350" y="82" width="3" height="28" fill="#3A4149"/><ellipse cx="351.5" cy="76" rx="8" ry="12" fill="#FF9A55" opacity=".7"/>
   <path d="M0 106 C60 100 120 108 190 106 C250 103 310 109 372 106 V118 H0Z" fill="url(#lomaS)"/>
-  <path d="M0 114 C80 109 160 116 240 113 C300 111 340 114 372 113 V118 H0Z" fill="#3A4149" opacity=".18"/>
+  <path d="M0 102 C80 98 160 104 240 101 C300 99 340 102 372 101 V118 H0Z" fill="#3A4149" opacity=".42"/>
 </svg>
