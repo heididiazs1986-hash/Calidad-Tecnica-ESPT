@@ -477,10 +477,26 @@ async function elegirSup(obligatorio){
     buttons:[...(obligatorio?[]:[{id:'no',text:'Cancelar'}]),{id:'ok',text:'Continuar',kind:'primary'}],dismissable:!obligatorio});
   if(r==='ok'){S.sup=sel.value;S.todas=false;await dbPut('meta',S.sup,'supervisor');go('pend');}
 }
+/* ---------- sin conexión e instalación ---------- */
+let dpInstalar=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dpInstalar=e;});
+window.addEventListener('appinstalled',()=>{dpInstalar=null;toast('App instalada');});
+const instalada=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+async function offlineListo(){
+  try{
+    if(!('serviceWorker' in navigator)||!window.caches)return false;
+    const reg=await navigator.serviceWorker.getRegistration();if(!reg||!reg.active)return false;
+    for(const u of ['index.html','catalogo-base.js','manifest.webmanifest','icons/icon-192.png','icons/icon-512.png']){if(!(await caches.match(u,{ignoreSearch:true})))return false;}
+    return true;
+  }catch(e){return false;}
+}
 async function menu(){
   const act=(text,fn)=>h('button',{class:'btn ghost',onclick:()=>{$('#dlg').close();fn();}},text);
   const nAct=S.cat.filter(i=>n(i.activo)==='si').length;
+  const off=await offlineListo();
   await modal({title:'Menú',content:h('div',{class:'menu'},
+    h('div',{class:'card',style:'display:flex;gap:10px;align-items:center;padding:10px 12px'},h('span',{class:'badge '+(off?'ok':'warn')},off?'SIN CONEXIÓN: LISTO':'PREPARANDO'),h('span',{class:'muted',style:'font-size:12.5px'},off?'La app ya está guardada en este celular.':'Mantén la app abierta con internet unos segundos y vuelve a abrir este menú.')),
+    ...(!instalada()?[dpInstalar?act('Instalar app en el celular',async()=>{dpInstalar.prompt();await dpInstalar.userChoice.catch(()=>{});dpInstalar=null;}):h('p',{class:'muted',style:'font-size:12.5px'},'Para instalarla: abre esta dirección en Chrome, toca ⋮ y elige «Instalar app».')]:[]),
     act('Cargar pendientes del día (CSV o JSON)',()=>elegirArchivo('.csv,.json,text/csv,application/json',cargarPendientes)),
     act('Actualizar catálogo de hallazgos',()=>elegirArchivo('.csv,.json,text/csv,application/json',cargarCatalogo)),
     act('Cambiar supervisor',()=>elegirSup(false)),
