@@ -655,10 +655,10 @@ function vistaForm(m){
     const sel=h('select',{class:'minp',disabled:F.ro});sel.append(h('option',{value:''},'— Sin marca —'),...MARCAS.map(x=>h('option',{value:x},x)));
     sel.value=MARCAS.includes(p.marca)?p.marca:'';sel.onchange=()=>{p.marca=sel.value;F.dirty=true;};
     m.append(h('section',{class:'card manual'},h('div',{style:'font:800 16px var(--f-head)'},'Inspección sin orden cargada'),
-      h('p',{class:'muted',style:'font-size:12.5px;margin:4px 0 10px'},'Escribe la orden de incorporación o, si no la consigues, el medidor. Uno de los dos es obligatorio; la marca es opcional.'),
+      h('p',{class:'muted',style:'font-size:12.5px;margin:4px 0 10px'},'Escribe la orden de incorporación o, si no la consigues, el medidor. Uno de los dos es obligatorio; si escribes el medidor, la marca también.'),
       campoIn('Orden de incorporación','orden',{inputMode:'numeric',placeholder:'Número de orden'}),
       campoIn('Medidor','medidor',{placeholder:'Número del medidor'}),
-      h('label',{class:'mf'},h('span',null,'Marca del medidor (opcional)'),sel)));
+      h('label',{class:'mf'},h('span',null,'Marca del medidor (obligatoria si hay medidor)'),sel)));
   }else
   m.append(h('section',{class:'card'},h('div',{style:'font:800 16px var(--f-head);overflow-wrap:anywhere'},p.direccion||'(sin dirección)'),
     h('div',{class:'grid'},
@@ -736,6 +736,7 @@ async function guardar(){
     const o=(F.orden||'').trim(),m=(F.p.medidor||'').trim();
     const aviso=t=>{toast(t);const el=document.querySelector('.manual');el&&el.scrollIntoView({block:'center'});};
     if(!o&&!m)return aviso('Escribe el número de orden de incorporación o el medidor.');
+    if(m&&!F.p.marca)return aviso('Si escribes el medidor, elige también la marca.');
     if(o&&!/^\d{5,}$/.test(o))return aviso('La orden de incorporación debe llevar solo números (mínimo 5).');
     if(o&&regDe(o)&&!F.existing)return aviso('Ya inspeccionaste esa orden. Ábrela desde Ejecutadas.');
     F.orden=o;F.p.medidor=m;
