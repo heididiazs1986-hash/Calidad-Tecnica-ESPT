@@ -1,63 +1,60 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372 148" preserveAspectRatio="xMidYMax slice" class="scene" role="img" aria-label="Supervisor con casco blanco junto a un poste con medidor">
-  <!-- sol y cerros -->
-  <circle cx="168" cy="104" r="20" fill="#FFB27A" opacity=".45"/>
-  <path d="M0 116 C60 90 110 106 170 94 C230 82 290 104 372 88 L372 148 L0 148Z" fill="#F4C9AA" opacity=".65"/>
-  <path d="M0 130 C70 108 130 126 200 114 C270 102 320 120 372 110 L372 148 L0 148Z" fill="#C1C7CE" opacity=".5"/>
-  <path d="M0 142 C80 128 150 140 230 134 C290 130 340 138 372 134 L372 148 L0 148Z" fill="#9FAAB4" opacity=".35"/>
-  <!-- casas -->
-  <g>
-    <rect x="30" y="112" width="22" height="15" fill="#fff" opacity=".95"/><path d="M26 112 L41 100 L56 112Z" fill="#E8A987"/><rect x="38" y="118" width="6" height="9" fill="#C1C7CE"/>
-    <rect x="62" y="117" width="17" height="11" fill="#fff" opacity=".95"/><path d="M59 117 L70.5 108 L82 117Z" fill="#E8A987"/>
-    <rect x="104" y="119" width="14" height="9" fill="#fff" opacity=".9"/><path d="M101 119 L111 111 L121 119Z" fill="#E0B79B"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372 170" preserveAspectRatio="xMidYMax slice" class="scene" role="img" aria-label="Supervisor con casco blanco en primer plano, con un poste y un medidor al fondo">
+  <defs>
+    <clipPath id="vestClip">
+      <path d="M296 135 L311 135 L318 152 L318 170 L282 170 L282 155 Q282 138 296 135Z"/>
+      <path d="M340 135 L325 135 L318 152 L318 170 L354 170 L354 155 Q354 138 340 135Z"/>
+    </clipPath>
+  </defs>
+  <!-- fondo: sol, cerros, casas, poste -->
+  <g transform="translate(0 22)">
+    <circle cx="150" cy="104" r="20" fill="#FF6600" opacity=".30"/>
+    <path d="M0 116 C60 90 110 106 170 94 C230 82 290 104 372 88 L372 148 L0 148Z" fill="#FF6600" opacity=".16"/>
+    <path d="M0 130 C70 108 130 126 200 114 C270 102 320 120 372 110 L372 148 L0 148Z" fill="#C1C7CE" opacity=".5"/>
+    <path d="M0 142 C80 128 150 140 230 134 C290 130 340 138 372 134 L372 148 L0 148Z" fill="#C1C7CE" opacity=".75"/>
+    <rect x="30" y="112" width="22" height="15" fill="#FEFEFF" opacity=".98"/><path d="M26 112 L41 100 L56 112Z" fill="#FF6600" opacity=".75"/><rect x="38" y="118" width="6" height="9" fill="#C1C7CE"/>
+    <rect x="62" y="117" width="17" height="11" fill="#FEFEFF" opacity=".98"/><path d="M59 117 L70.5 108 L82 117Z" fill="#FF6600" opacity=".75"/>
+    <rect x="96" y="119" width="14" height="9" fill="#FEFEFF" opacity=".95"/><path d="M93 119 L103 111 L113 119Z" fill="#FF6600" opacity=".6"/>
+    <path d="M205 88 Q165 102 128 92 M205 88 Q150 96 100 90" fill="none" stroke="#4A525A" stroke-width="1" opacity=".6"/>
+    <rect x="201" y="76" width="5" height="72" rx="1.5" fill="#4A525A"/>
+    <rect x="189" y="86" width="29" height="3.4" rx="1.5" fill="#3A4149"/>
+    <circle cx="191" cy="85" r="2.2" fill="#C1C7CE"/><circle cx="216" cy="85" r="2.2" fill="#C1C7CE"/>
+    <rect x="193" y="104" width="21" height="18" rx="3" fill="#FEFEFF" stroke="#C1C7CE" stroke-width="1.2"/>
+    <circle cx="203.5" cy="111" r="4.6" fill="#FEFEFF" stroke="#79D1FF" stroke-width="1.4"/>
+    <path d="M201.2 111.2l1.6 1.6 3-3.2" fill="none" stroke="#FF6600" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="197" y="117" width="13" height="2" rx="1" fill="#C1C7CE"/>
   </g>
-  <!-- cables -->
-  <path d="M215 88 Q165 102 120 92 M215 88 Q150 96 90 90" fill="none" stroke="#7a6a60" stroke-width="1" opacity=".65"/>
-  <!-- poste con medidor -->
-  <g>
-    <rect x="231" y="76" width="5" height="72" rx="1.5" fill="#8A6F5A"/>
-    <rect x="219" y="86" width="29" height="3.4" rx="1.5" fill="#7a6252"/>
-    <circle cx="221" cy="85" r="2.2" fill="#C1C7CE"/><circle cx="246" cy="85" r="2.2" fill="#C1C7CE"/>
-    <rect x="223" y="104" width="21" height="18" rx="3" fill="#F3F5F7" stroke="#B4BDC6" stroke-width="1.2"/>
-    <circle cx="233.5" cy="111" r="4.6" fill="#fff" stroke="#79D1FF" stroke-width="1.4"/>
-    <path d="M231.2 111.2l1.6 1.6 3-3.2" fill="none" stroke="#17703F" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-    <rect x="227" y="117" width="13" height="2" rx="1" fill="#C1C7CE"/>
-  </g>
-  <!-- supervisor -->
-  <g transform="translate(312 147) scale(.86) translate(-312 -147)">
-    <ellipse cx="312" cy="147" rx="24" ry="3.6" fill="#1B1F23" opacity=".16"/>
-    <!-- piernas y botas -->
-    <rect x="301" y="118" width="9" height="26" rx="3" fill="#2B3A4A"/>
-    <rect x="314" y="118" width="9" height="26" rx="3" fill="#2B3A4A"/>
-    <rect x="299" y="141" width="12" height="6" rx="3" fill="#4A3B32"/>
-    <rect x="313" y="141" width="12" height="6" rx="3" fill="#4A3B32"/>
-    <!-- brazo derecho (saludando) -->
-    <path d="M326 95 L338 82" stroke="#2B3A4A" stroke-width="7" stroke-linecap="round"/>
-    <circle cx="339.5" cy="79.5" r="4.4" fill="#E8B48F"/>
-    <!-- torso: camisa + chaleco -->
-    <rect x="296" y="88" width="32" height="34" rx="9" fill="#2B3A4A"/>
-    <path d="M298 90 h10 l-1 32 h-9 a4 4 0 0 1 -4 -4 v-24 a4 4 0 0 1 4 -4z" fill="#FF6600"/>
-    <path d="M326 90 h-10 l1 32 h9 a4 4 0 0 0 4 -4 v-24 a4 4 0 0 0 -4 -4z" fill="#FF6600"/>
-    <rect x="296.5" y="102" width="31" height="3.2" fill="#FFF3E0" opacity=".95"/>
-    <rect x="296.5" y="111" width="31" height="3.2" fill="#FFF3E0" opacity=".95"/>
-    <!-- brazo izquierdo con tablilla -->
-    <path d="M298 94 L292 110" stroke="#2B3A4A" stroke-width="7" stroke-linecap="round"/>
-    <g transform="rotate(-8 296 110)">
-      <rect x="285" y="99" width="17" height="22" rx="2.6" fill="#B98B5E"/>
-      <rect x="287.3" y="102" width="12.4" height="16.5" rx="1.2" fill="#fff"/>
-      <rect x="291" y="97.5" width="5" height="4" rx="1.2" fill="#8C6A47"/>
-      <path d="M289.5 107l2 2 3.6-3.8" fill="none" stroke="#17703F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <rect x="289.5" y="112" width="8" height="1.3" fill="#C1C7CE"/><rect x="289.5" y="115" width="6" height="1.3" fill="#C1C7CE"/>
-    </g>
-    <circle cx="293" cy="112" r="3.8" fill="#E8B48F"/>
-    <!-- cuello y cabeza -->
-    <rect x="308" y="82" width="8" height="8" rx="3" fill="#D9A07C"/>
-    <circle cx="312" cy="75" r="10" fill="#E8B48F"/>
-    <circle cx="308.4" cy="75.5" r="1.2" fill="#2B3A4A"/><circle cx="315.6" cy="75.5" r="1.2" fill="#2B3A4A"/>
-    <path d="M308.6 79.6 Q312 82.4 315.4 79.6" fill="none" stroke="#9C5B3E" stroke-width="1.3" stroke-linecap="round"/>
+  <!-- supervisor en primer plano: cabeza y torso -->
+  <g transform="translate(-20 0)">
+    <!-- brazo que saluda -->
+    <path d="M351 148 Q366 142 367 120" fill="none" stroke="#3A4149" stroke-width="11" stroke-linecap="round"/>
+    <circle cx="367" cy="113" r="6" fill="#E8B48F"/>
+    <!-- torso: camisa y chaleco -->
+    <path d="M280 170 L280 154 Q280 138 298 135 L338 135 Q356 138 356 154 L356 170 Z" fill="#3A4149"/>
+    <rect x="311" y="124" width="14" height="14" rx="5" fill="#D9A07C"/>
+    <path d="M296 135 L311 135 L318 152 L318 170 L282 170 L282 155 Q282 138 296 135Z" fill="#FF6600"/>
+    <path d="M340 135 L325 135 L318 152 L318 170 L354 170 L354 155 Q354 138 340 135Z" fill="#FF6600"/>
+    <g clip-path="url(#vestClip)"><rect x="280" y="151" width="76" height="4" fill="#FEFEFF"/><rect x="280" y="161" width="76" height="4" fill="#FEFEFF"/></g>
+    <!-- cabeza -->
+    <circle cx="303" cy="111" r="3.2" fill="#D9A07C"/><circle cx="333" cy="111" r="3.2" fill="#D9A07C"/>
+    <ellipse cx="318" cy="110" rx="15" ry="17" fill="#E8B48F"/>
+    <circle cx="312" cy="110" r="1.7" fill="#3A4149"/><circle cx="324" cy="110" r="1.7" fill="#3A4149"/>
+    <path d="M308.5 105.4 q3.5 -2 7 0 M320.5 105.4 q3.5 -2 7 0" fill="none" stroke="#3A4149" stroke-width="1.3" stroke-linecap="round"/>
+    <path d="M318 112 q2.2 3 0 4.2" fill="none" stroke="#D9A07C" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M311.5 119.6 Q318 125.4 324.5 119.6" fill="none" stroke="#9C5B3E" stroke-width="1.7" stroke-linecap="round"/>
     <!-- casco blanco -->
-    <path d="M300.4 74 a11.6 11.6 0 0 1 23.2 0 Z" fill="#FFFFFF" stroke="#D4DAE0" stroke-width="1.1"/>
-    <rect x="310" y="62.6" width="4" height="11.4" rx="1.6" fill="#F0F3F6" stroke="#D4DAE0" stroke-width=".8"/>
-    <rect x="297.6" y="72.6" width="28.8" height="4" rx="2" fill="#FFFFFF" stroke="#D4DAE0" stroke-width="1.1"/>
-    <path d="M304 67 a9 9 0 0 1 5 -4" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".9"/>
+    <path d="M297 98 a21 26 0 0 1 42 0 Z" fill="#FEFEFF" stroke="#C1C7CE" stroke-width="1.2"/>
+    <rect x="315" y="72.6" width="6" height="24.6" rx="2" fill="#FF6600"/>
+    <path d="M302 90 a17 21 0 0 1 8 -14" fill="none" stroke="#FEFEFF" stroke-width="2" stroke-linecap="round" opacity=".9"/>
+    <rect x="291" y="95" width="54" height="6.4" rx="3.2" fill="#FEFEFF" stroke="#C1C7CE" stroke-width="1.2"/>
+    <!-- tablilla (primer plano) -->
+    <path d="M286 150 L284 166" fill="none" stroke="#3A4149" stroke-width="11" stroke-linecap="round"/>
+    <g transform="rotate(-8 292 158)">
+      <rect x="276" y="140" width="29" height="36" rx="3.4" fill="#79D1FF"/>
+      <rect x="279.5" y="146" width="22" height="27" rx="1.6" fill="#FEFEFF"/>
+      <rect x="285" y="137" width="9" height="7.4" rx="2" fill="#C1C7CE"/>
+      <path d="M283 154.6 l3.6 3.6 6.8 -7.2" fill="none" stroke="#FF6600" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="283" y="163" width="15" height="2" rx="1" fill="#C1C7CE"/><rect x="283" y="168" width="10" height="2" rx="1" fill="#C1C7CE"/>
+    </g>
+    <circle cx="303" cy="154" r="5.4" fill="#E8B48F"/>
   </g>
 </svg>
