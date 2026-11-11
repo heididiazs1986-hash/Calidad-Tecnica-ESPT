@@ -179,7 +179,7 @@ dialog::backdrop{background:rgba(20,26,32,.55)}
   <!-- supervisora -->
   <g>
     <path d="M244 100 C243 108 245 113 250 114 L253 103Z" fill="#3A2A22"/>
-    <path d="M222 170 L226 146 Q236 134 252 134 L274 134 Q292 138 298 152 L302 170Z" fill="#FF7F33"/>
+    <path d="M222 170 L226 146 Q236 134 252 134 L274 134 Q292 138 298 152 L302 170Z" fill="#FF9455"/>
     <path d="M226 158 H298" stroke="#FEFEFF" stroke-width="6"/>
     <path d="M250 134 L262 150 L274 134Z" fill="#3A4149"/>
     <path d="M238 138 L262 170" stroke="#3A4149" stroke-width="5" opacity=".9"/>
@@ -533,7 +533,7 @@ function vistaEnv(m){
     return h('button',{class:'card row',style:'text-align:left;width:100%'+(r.estado==='exportada'?';opacity:.8':''),onclick:()=>{on?S.selEnv.delete(r.id):S.selEnv.add(r.id);render();}},
       h('span',{class:'cb'+(on?' on':'')}),
       h('div',{style:'flex:1;min-width:0'},h('div',{style:'font:700 14px var(--f-head)'},r.datos.direccion||'(sin dirección)'),
-        h('div',{style:'font-size:12px;color:var(--muted);margin-top:2px'},`OS ${r.orden}`,r.fotosN?` · ${r.fotosN} fotos`:'',r.estado==='exportada'?` · exportada ${fechaCorta((r.exportado||'').slice(0,10))}`:'')),
+        h('div',{style:'font-size:12px;color:var(--muted);margin-top:2px'},`OS ${r.orden}`,r.fotosN?` · ${r.fotosN} ${r.fotosN===1?'foto':'fotos'}`:'',r.estado==='exportada'?` · exportada ${fechaCorta((r.exportado||'').slice(0,10))}`:'')),
       h('span',{class:'badge '+(r.res.resultado==='CONFORME'?'ok':'bad')},r.res.resultado));};
   const ids=[...S.selEnv].filter(id=>mine.some(r=>r.id===id));
   m.append(h('div',{class:'h2'},`Listas para enviar · ${listas.length}`));

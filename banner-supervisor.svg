@@ -39,7 +39,7 @@
   <!-- supervisora -->
   <g>
     <path d="M244 100 C243 108 245 113 250 114 L253 103Z" fill="#3A2A22"/>
-    <path d="M222 170 L226 146 Q236 134 252 134 L274 134 Q292 138 298 152 L302 170Z" fill="#FF7F33"/>
+    <path d="M222 170 L226 146 Q236 134 252 134 L274 134 Q292 138 298 152 L302 170Z" fill="#FF9455"/>
     <path d="M226 158 H298" stroke="#FEFEFF" stroke-width="6"/>
     <path d="M250 134 L262 150 L274 134Z" fill="#3A4149"/>
     <path d="M238 138 L262 170" stroke="#3A4149" stroke-width="5" opacity=".9"/>
