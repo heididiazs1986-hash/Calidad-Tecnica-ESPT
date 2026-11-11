@@ -133,6 +133,15 @@ dialog::backdrop{background:rgba(20,26,32,.55)}
 .menu .btn{justify-content:flex-start;width:100%;font-size:14px}
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#1B1F23;color:#FEFEFF;border-radius:12px;padding:11px 16px;font-size:13.5px;z-index:20;max-width:88vw;box-shadow:var(--shadow);text-align:center}
 .muted{color:var(--muted)}
+#lock{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:24px;background:linear-gradient(180deg,rgba(121,209,255,.55),rgba(121,209,255,.18) 55%,transparent),var(--bg)}
+#lock.show{display:flex}
+.lockbox{width:100%;max-width:360px;display:flex;flex-direction:column;gap:14px;text-align:center;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:20px;padding:26px 20px 18px;box-shadow:var(--shadow)}
+.lockbox .mark{width:68px;height:68px;border-radius:18px;background:var(--p);display:grid;place-items:center;margin:0 auto;box-shadow:0 6px 16px rgba(255,102,0,.35)}
+.lockbox h1{font:800 24px var(--f-head)}
+.lockbox .err{color:var(--bad);font-weight:700;min-height:20px;font-size:14px}
+.lockbox input{width:100%;height:48px;border:1.5px solid var(--line);border-radius:12px;padding:0 14px;background:var(--surface);outline:0;text-align:center}
+.lockbox input:focus{border-color:var(--p)}
+.lockbox .credit{padding:4px 0 0}
 </style>
 </head>
 <body data-view="pend">
@@ -237,6 +246,7 @@ dialog::backdrop{background:rgba(20,26,32,.55)}
   <main id="main"></main>
   <nav class="tabs" id="tabs"></nav>
 </div>
+<div id="lock" role="dialog" aria-modal="true"></div>
 <dialog id="dlg"></dialog>
 <div class="toast" id="toast" hidden></div>
 <script src="catalogo-base.js"></script>
@@ -244,7 +254,7 @@ dialog::backdrop{background:rgba(20,26,32,.55)}
 (()=>{
 'use strict';
 const VERSION='1.0.0';
-const SUPERVISORES=['Camilo Cano','Jairo Vargas','Diego Sastre','Lisimaco Rodriguez','Deivi Caicedo','Heidi Diaz','Erik Romero'];
+const SUPERVISORES=['Camilo Cano','Jairo Vargas','Diego Sastre','Lisimaco Rodriguez','Deivi Caicedo','Heidi Diaz','Erik Romero'].sort((a,b)=>a.localeCompare(b,'es'));
 const COMPS=[
   {k:'infor_OS',label:'Información OS',match:['informacionos','inforos']},
   {k:'Medidor',label:'Medidor',match:['medidor']},
@@ -308,7 +318,7 @@ function setCatalogo(list){
     const c=COMPS.find(c=>c.match.includes(n(it.comp)));
     if(c)S.byComp[c.k].push(it);
   }
-  for(const c of COMPS)S.byComp[c.k].sort((a,b)=>(isConf(b)-isConf(a)));
+  for(const c of COMPS)S.byComp[c.k].sort((a,b)=>(isConf(b)-isConf(a))||a.hall.localeCompare(b.hall,'es'));
 }
 const catBase=()=>(window.CATALOGO_BASE||[]).map(r=>({cod:String(r[0]).trim(),comp:r[1],hall:String(r[2]).trim(),estado:r[3],activo:r[4]}));
 const nsnDe=k=>S.byComp[k].find(isConf);
@@ -469,6 +479,12 @@ async function menu(){
     act('Cargar pendientes del día (CSV o JSON)',()=>elegirArchivo('.csv,.json,text/csv,application/json',cargarPendientes)),
     act('Actualizar catálogo de hallazgos',()=>elegirArchivo('.csv,.json,text/csv,application/json',cargarCatalogo)),
     act('Cambiar supervisor',()=>elegirSup(false)),
+    ...(L.state().configured?[
+      act('Bloquear ahora',()=>L.lockNow()),
+      ...(await L.bioSupported()?[act(L.state().bio?'Desactivar huella':'Activar huella',async()=>{if(L.state().bio){L.disableBio();toast('Huella desactivada');}else toast(await L.enableBio()?'Huella activada':'No se pudo activar la huella');})]:[]),
+      act('Cambiar clave',()=>showSetup(()=>{})),
+      act('Quitar bloqueo',async()=>{if(await confirmar('La app quedará sin clave ni huella en este celular.','Quitar','danger'))lwr({skipped:true});})
+    ]:[act('Crear clave y huella',()=>showSetup(()=>{}))]),
     act(document.documentElement.dataset.theme==='dark'?'Tema claro':'Tema oscuro',()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('gs-theme',t);}catch(e){}}),
     h('p',{class:'muted',style:'font-size:12px;margin-top:6px'},`GS Calidad Técnica v${VERSION} · ${nAct} hallazgos activos en el catálogo`),
     h('p',{class:'muted',style:'font-size:12px'},'Desarrollado por Heidi Díaz')),
@@ -726,8 +742,68 @@ async function exportar(ids){
   }catch(e){console.error(e);toast('No pude generar el zip. Intenta con menos inspecciones.');}
 }
 
+/* ---------- bloqueo: huella primero, clave de respaldo ---------- */
+const LK='gsq_lock',MAXFAIL=5;
+const lrd=()=>{try{return JSON.parse(localStorage.getItem(LK)||'null');}catch(e){return null;}};
+const lwr=o=>{try{localStorage.setItem(LK,JSON.stringify(o));}catch(e){}};
+const b64=u=>btoa(String.fromCharCode(...new Uint8Array(u)));
+const unb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function lhash(clave,salt,iter){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(clave),'PBKDF2',false,['deriveBits']);return b64(await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:unb64(salt),iterations:iter},k,256));}
+const FING='<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FEFEFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 11v3.5c0 2-.5 3.5-1.5 5"/><path d="M8.5 14c0 2.5-.5 4-1.5 5.5"/><path d="M15.5 12.5c0 3.5-.7 6-2 8"/><path d="M5.5 10.5a6.5 6.5 0 0 1 12.7-1.8"/><path d="M8.5 11a3.5 3.5 0 0 1 7 0"/><path d="M19 13c0 3-.4 5-1.2 7"/></svg>';
+const LOCKI='<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#FEFEFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+const LOGOK='<svg width="40" height="40" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="10" stroke="#FEFEFF" stroke-width="2.4"/><path d="M8.2 13.4l3.3 3.3 6.4-6.8" stroke="#FEFEFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const L={unlocked:false,hiddenAt:0,idleT:null};
+L.state=()=>{const s=lrd();return{configured:!!(s&&s.hash),skipped:!!(s&&s.skipped),auto:s&&s.auto!=null?s.auto:5,bio:!!(s&&s.bio)};};
+L.bioSupported=async()=>{try{return !!(window.PublicKeyCredential&&PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable&&await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable());}catch(e){return false;}};
+async function lsetClave(clave){const salt=b64(crypto.getRandomValues(new Uint8Array(16))),iter=150000,s=lrd()||{};lwr({...s,skipped:false,salt,iter,hash:await lhash(clave,salt,iter),auto:s.auto!=null?s.auto:5,fails:0,until:0});}
+async function lcheck(clave){const s=lrd();if(!s||!s.hash)return true;return(await lhash(clave,s.salt,s.iter))===s.hash;}
+L.enableBio=async()=>{try{const cred=await navigator.credentials.create({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),rp:{name:'GS Calidad Técnica'},user:{id:crypto.getRandomValues(new Uint8Array(16)),name:'supervisor',displayName:'Supervisor'},pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required',residentKey:'discouraged'},timeout:60000}});const s=lrd()||{};lwr({...s,bio:b64(cred.rawId)});return true;}catch(e){return false;}};
+L.disableBio=()=>{const s=lrd()||{};delete s.bio;lwr(s);};
+async function bioUnlock(){const s=lrd();if(!s||!s.bio)return false;try{await navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),allowCredentials:[{type:'public-key',id:unb64(s.bio)}],userVerification:'required',timeout:60000}});return true;}catch(e){return false;}}
+function lbox(...kids){const el=$('#lock');el.replaceChildren(h('div',{class:'lockbox'},...kids,h('div',{class:'credit'},'Desarrollado por Heidi Díaz')));el.classList.add('show');return el;}
+function lhide(){const el=$('#lock');el.classList.remove('show');el.replaceChildren();L.unlocked=true;armIdle();}
+function showSetup(resolve){
+  const a=h('input',{type:'password',placeholder:'Clave nueva',autocomplete:'new-password'}),b=h('input',{type:'password',placeholder:'Repite la clave',autocomplete:'new-password'}),er=h('div',{class:'err'});
+  lbox(h('div',{class:'mark',html:LOCKI}),h('h1',null,'Protege la app'),h('p',{class:'muted'},'Crea una clave de al menos 6 caracteres. Después puedes activar la huella.'),a,b,er,
+    h('button',{class:'btn primary block',onclick:async()=>{
+      if(a.value.length<6)return er.textContent='La clave debe tener al menos 6 caracteres.';
+      if(a.value!==b.value)return er.textContent='Las claves no coinciden.';
+      await lsetClave(a.value);L.unlocked=true;
+      if(await L.bioSupported()){
+        lbox(h('div',{class:'mark',html:FING}),h('h1',null,'¿Usar tu huella?'),h('p',{class:'muted'},'Abrirás la app con la huella o el desbloqueo del teléfono. La clave queda de respaldo.'),
+          h('button',{class:'btn primary block',onclick:async()=>{const ok=await L.enableBio();toast(ok?'Huella activada':'No se pudo activar la huella en este dispositivo');lhide();resolve();}},'Activar huella'),
+          h('button',{class:'btn ghost block',onclick:()=>{lhide();resolve();}},'Más tarde'));
+      }else{lhide();resolve();}
+    }},'Crear clave'),
+    h('button',{class:'btn ghost block',onclick:()=>{if(!L.state().configured)lwr({skipped:true});lhide();resolve();}},'Ahora no'));
+  setTimeout(()=>a.focus(),100);
+}
+function showUnlock(resolve){
+  const s=lrd(),hasBio=!!(s&&s.bio);
+  const p=h('input',{type:'password',placeholder:'Clave',autocomplete:'current-password'}),er=h('div',{class:'err'});
+  const tick=()=>{const u=((lrd()||{}).until||0)-Date.now();if(u>0){er.textContent=`Demasiados intentos. Espera ${Math.ceil(u/1000)} s.`;setTimeout(tick,500);}else if(er.textContent.startsWith('Demasiados'))er.textContent='';};
+  const ok=()=>{const c=lrd()||{};lwr({...c,fails:0,until:0});lhide();resolve();};
+  const bio=async()=>{if(await bioUnlock())ok();};
+  const go=async()=>{const cur=lrd()||{};if((cur.until||0)>Date.now())return tick();
+    if(await lcheck(p.value))ok();
+    else{const f=(cur.fails||0)+1,wait=f>=MAXFAIL?Math.min(300,15*2**(f-MAXFAIL))*1000:0;lwr({...cur,fails:f,until:wait?Date.now()+wait:0});er.textContent=wait?'':'Clave incorrecta.';p.value='';tick();}};
+  p.onkeydown=e=>{if(e.key==='Enter')go();};
+  lbox(h('div',{class:'mark',html:hasBio?FING:LOGOK}),h('h1',null,'GS Calidad Técnica'),
+    hasBio?h('button',{class:'btn primary block',onclick:bio},'Usar huella'):null,
+    h('p',{class:'muted'},hasBio?'O ingresa tu clave':'Ingresa tu clave'),p,er,
+    h('button',{class:hasBio?'btn ghost block':'btn primary block',onclick:go},'Entrar'));
+  tick();
+  if(hasBio)setTimeout(bio,250);else setTimeout(()=>p.focus(),100);
+}
+L.init=()=>new Promise(resolve=>{const st=L.state();if(!st.configured&&st.skipped){L.unlocked=true;return resolve();}if(!st.configured)return showSetup(resolve);showUnlock(resolve);});
+L.lockNow=()=>{if(!L.state().configured)return toast('Aún no tienes clave. Créala en el menú.');L.unlocked=false;clearTimeout(L.idleT);showUnlock(()=>{});};
+function armIdle(){clearTimeout(L.idleT);const st=L.state();if(!st.configured||!st.auto)return;L.idleT=setTimeout(()=>{if(L.unlocked&&!$('#dlg').open&&S.view!=='form')L.lockNow();else armIdle();},st.auto*60000);}
+['pointerdown','keydown','scroll'].forEach(ev=>document.addEventListener(ev,()=>{if(L.unlocked)armIdle();},{passive:true}));
+document.addEventListener('visibilitychange',()=>{const st=L.state();if(!st.configured)return;if(document.hidden)L.hiddenAt=Date.now();else if(L.unlocked&&st.auto&&Date.now()-L.hiddenAt>st.auto*60000)L.lockNow();});
+
 /* ---------- arranque ---------- */
 async function init(){
+  await L.init();
   await openDB();
   const cat=await dbGet('meta','catalogo');setCatalogo(cat&&cat.length?cat:catBase());
   S.sup=(await dbGet('meta','supervisor'))||null;
