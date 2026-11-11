@@ -51,6 +51,7 @@ body[data-view=form] .bar{top:12px}
 .iconbtn{width:36px;height:36px;border-radius:50%;background:#FEFEFF;color:#1B1F23;display:grid;place-items:center;border:1px solid var(--line);box-shadow:0 2px 6px rgba(0,0,0,.08)}
 /* contenido */
 main{flex:1;padding:12px 14px 96px;display:flex;flex-direction:column;gap:10px}
+.mf{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;font:600 12.5px var(--f-head,inherit)}.mf span{color:var(--muted)}.minp{height:44px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);padding:0 12px;font-size:15px;width:100%;box-sizing:border-box}
 .search{display:flex;align-items:center;gap:8px;height:44px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);padding:0 12px}
 .search:focus-within{border-color:var(--p)}
 .search input{flex:1;border:0;outline:0;background:none;min-width:0}
@@ -256,7 +257,9 @@ dialog::backdrop{background:rgba(20,26,32,.55)}
 <script>
 (()=>{
 'use strict';
-const VERSION='1.0.0';
+const VERSION='1.1.0';
+const MARCAS=['@METER', 'ABB', 'ACTARIS', 'AEG', 'ALDANA', 'Car-1', 'CDM', 'CHINT', 'COMCORE', 'COMPLANT', 'ELGAMA', 'ELSTER', 'ENEL', 'ESTROM', 'GALILEO', 'GAUGETECH', 'GOMELONG', 'HEXCELL', 'HEXING', 'HIKING', 'HOLLEY', 'INHEMETER', 'ISKRA', 'ITRON', 'KRIZIK', 'LANDIS', 'METCOM', 'MICROSTAR', 'NANSEN', 'NINGBO', 'OSAKI', 'PAFAL', 'SCHLUMBERGER', 'SCORPION', 'SIEMENS', 'SKAITEKS', 'SUMMETER', 'SUNRISE', 'TECUN', 'TR-CEICA/ME-WINSKY', 'WASION', 'WINSKY'];
+const refDe=(orden,d)=>orden||(d&&d.medidor?'MED-'+d.medidor:'SIN-ORDEN');
 const SUPERVISORES=['Camilo Cano','Jairo Vargas','Diego Sastre','Lisimaco Rodriguez','Deivi Caicedo','Heidi Diaz','Erik Romero'].sort((a,b)=>a.localeCompare(b,'es'));
 const COMPS=[
   {k:'infor_OS',label:'Información OS',match:['informacionos','inforos']},
@@ -537,14 +540,15 @@ function vistaPend(m){
   const{lista,ocultasReg,deOtros,hayAsig}=pendVisibles();
   if(!S.pend.length){
     m.append(h('div',{class:'empty'},h('b',null,'Aún no hay pendientes'),h('span',null,'Carga el archivo de pendientes del día (CSV o JSON) para empezar.'),
-      h('button',{class:'btn primary',onclick:()=>elegirArchivo('.csv,.json,text/csv,application/json',cargarPendientes)},'Cargar pendientes')),creditos());
+      h('button',{class:'btn primary',onclick:()=>elegirArchivo('.csv,.json,text/csv,application/json',cargarPendientes)},'Cargar pendientes'),
+      h('button',{class:'btn ghost',onclick:abrirManual},'Inspección sin orden cargada')),creditos());
     return;
   }
   const q=n(S.q);
   const vis=q?lista.filter(p=>n([p.orden,p.direccion,p.usuario,p.barrio,p.localidad,p.identificacion].join(' ')).includes(q)):lista;
   const inp=h('input',{type:'search',placeholder:'Buscar por dirección, orden o usuario…',value:S.q,'aria-label':'Buscar'});
   inp.oninput=()=>{S.q=inp.value;const pos=inp.selectionStart;vistaLista();};
-  m.append(h('label',{class:'search'},ic('search'),inp));
+  m.append(h('label',{class:'search'},ic('search'),inp),h('button',{class:'btn ghost block',style:'margin-top:8px',onclick:abrirManual},'+ Inspección sin orden cargada'));
   const sumEl=h('div',{class:'sum'});const listEl=h('div',{style:'display:flex;flex-direction:column;gap:9px'});
   m.append(sumEl,listEl,creditos());
   function vistaLista(){
@@ -568,7 +572,7 @@ function vistaEjec(m){
   if(!list.length){m.append(h('div',{class:'empty'},h('b',null,'Aún no hay inspecciones'),h('span',null,'Las que guardes aparecerán aquí hasta que las envíes.')),creditos());return;}
   m.append(...list.map(r=>h('button',{class:'card item',onclick:()=>abrirEjec(r.id)},
     h('div',{style:'min-width:0'},h('div',{class:'a'},r.datos.direccion||'(sin dirección)'),
-      h('div',{class:'b'},`OS ${r.orden} · ${fechaCorta(r.fecha)}`),
+      h('div',{class:'b'},`${r.datos&&r.datos.manual?'Sin orden cargada · ':'OS '}${refDe(r.orden,r.datos)} · ${fechaCorta(r.fecha)}`),
       h('div',{style:'margin-top:6px;display:flex;gap:6px;flex-wrap:wrap'},h('span',{class:'badge '+(r.res.resultado==='CONFORME'?'ok':'bad')},r.res.resultado),h('span',{class:'badge warn'},r.estado==='exportada'?'Exportada · bloqueada':'Pendiente de envío'))),
     h('span',{class:'go'},'›'))),creditos());
 }
@@ -580,7 +584,7 @@ function vistaEnv(m){
     return h('button',{class:'card row',style:'text-align:left;width:100%'+(r.estado==='exportada'?';opacity:.8':''),onclick:()=>{on?S.selEnv.delete(r.id):S.selEnv.add(r.id);render();}},
       h('span',{class:'cb'+(on?' on':'')}),
       h('div',{style:'flex:1;min-width:0'},h('div',{style:'font:700 14px var(--f-head)'},r.datos.direccion||'(sin dirección)'),
-        h('div',{style:'font-size:12px;color:var(--muted);margin-top:2px'},`OS ${r.orden}`,r.fotosN?` · ${r.fotosN} ${r.fotosN===1?'foto':'fotos'}`:'',r.estado==='exportada'?` · exportada ${fechaCorta((r.exportado||'').slice(0,10))}`:'')),
+        h('div',{style:'font-size:12px;color:var(--muted);margin-top:2px'},`${r.datos&&r.datos.manual?'Sin orden cargada · ':'OS '}${refDe(r.orden,r.datos)}`,r.fotosN?` · ${r.fotosN} ${r.fotosN===1?'foto':'fotos'}`:'',r.estado==='exportada'?` · exportada ${fechaCorta((r.exportado||'').slice(0,10))}`:'')),
       h('span',{class:'badge '+(r.res.resultado==='CONFORME'?'ok':'bad')},r.res.resultado));};
   const ids=[...S.selEnv].filter(id=>mine.some(r=>r.id===id));
   m.append(h('div',{class:'h2'},`Listas para enviar · ${listas.length}`));
@@ -597,6 +601,10 @@ async function abrirPend(orden){
   const p=S.pend.find(x=>x.orden===orden);if(!p)return;
   S.F={id:idDe(orden,S.sup),orden,p,sel:defaultSel(),obs:'',fotos:[],removed:[],nuevas:[],open:{},ro:false,dirty:false,existing:null};
   await cargarBorrador();entrarForm();
+}
+async function abrirManual(){
+  S.F={id:'M'+Date.now().toString(36)+'_'+slug(S.sup),orden:'',p:{manual:true,medidor:'',marca:''},sel:defaultSel(),obs:'',fotos:[],removed:[],nuevas:[],open:{},ro:false,dirty:false,existing:null};
+  entrarForm();
 }
 async function abrirEjec(id){
   const r=S.ejec.find(e=>e.id===id);if(!r)return;
@@ -641,6 +649,17 @@ function vistaForm(m){
     h('span',{class:'badge warn'},F.ro?'EXPORTADA · SOLO LECTURA':`EN INSPECCIÓN · ${fechaCorta(F.existing?F.existing.fecha:hoy())}`)));
   const mapa=p.lat&&p.lng&&!isNaN(+p.lat)&&!isNaN(+p.lng)?h('a',{href:`https://www.google.com/maps?q=${p.lat},${p.lng}`,target:'_blank',rel:'noopener'},`${p.lat}, ${p.lng}`):null;
   const campo=(l,v)=>v?h('div',null,l,h('b',null,v)):null;
+  if(p.manual){
+    const campoIn=(l,k,opt)=>{const i=h('input',Object.assign({class:'minp',value:k==='orden'?F.orden:(p[k]||''),disabled:F.ro,autocomplete:'off'},opt||{}));
+      i.oninput=()=>{if(k==='orden')F.orden=i.value.replace(/\D/g,'');else p[k]=i.value;if(k==='orden'&&i.value!==F.orden)i.value=F.orden;F.dirty=true;};return h('label',{class:'mf'},h('span',null,l),i);};
+    const sel=h('select',{class:'minp',disabled:F.ro});sel.append(h('option',{value:''},'— Sin marca —'),...MARCAS.map(x=>h('option',{value:x},x)));
+    sel.value=MARCAS.includes(p.marca)?p.marca:'';sel.onchange=()=>{p.marca=sel.value;F.dirty=true;};
+    m.append(h('section',{class:'card manual'},h('div',{style:'font:800 16px var(--f-head)'},'Inspección sin orden cargada'),
+      h('p',{class:'muted',style:'font-size:12.5px;margin:4px 0 10px'},'Escribe la orden de incorporación o, si no la consigues, el medidor. Uno de los dos es obligatorio; la marca es opcional.'),
+      campoIn('Orden de incorporación','orden',{inputMode:'numeric',placeholder:'Número de orden'}),
+      campoIn('Medidor','medidor',{placeholder:'Número del medidor'}),
+      h('label',{class:'mf'},h('span',null,'Marca del medidor (opcional)'),sel)));
+  }else
   m.append(h('section',{class:'card'},h('div',{style:'font:800 16px var(--f-head);overflow-wrap:anywhere'},p.direccion||'(sin dirección)'),
     h('div',{class:'grid'},
       campo('Orden',p.orden),campo('Usuario',p.usuario),campo('Identificación',p.identificacion),
@@ -696,7 +715,7 @@ function fotos(comp,camara,redraw){
       try{
         const blob=await reducir(file),F=S.F;let i=1,name;
         const usados=new Set(F.fotos.map(f=>f.name));
-        do{name=`${F.orden}_${slug(S.sup)}_${comp}_${String(i++).padStart(2,'0')}.jpg`;}while(usados.has(name));
+        do{name=`${slug(refDe(F.orden,F.p))}_${slug(S.sup)}_${comp}_${String(i++).padStart(2,'0')}.jpg`;}while(usados.has(name));
         const id=`${F.id}#${Date.now().toString(36)}${Math.random().toString(36).slice(2,6)}`;
         const reg={id,insp:F.id,comp,name,blob};
         await dbPut('fotos',reg);F.nuevas.push(id);F.fotos.push({...reg,url:URL.createObjectURL(blob)});F.dirty=true;draft();
@@ -713,6 +732,14 @@ async function quitarFoto(f,redraw){
 }
 async function guardar(){
   const F=S.F;
+  if(F.p.manual){
+    const o=(F.orden||'').trim(),m=(F.p.medidor||'').trim();
+    const aviso=t=>{toast(t);const el=document.querySelector('.manual');el&&el.scrollIntoView({block:'center'});};
+    if(!o&&!m)return aviso('Escribe el número de orden de incorporación o el medidor.');
+    if(o&&!/^\d{5,}$/.test(o))return aviso('La orden de incorporación debe llevar solo números (mínimo 5).');
+    if(o&&regDe(o)&&!F.existing)return aviso('Ya inspeccionaste esa orden. Ábrela desde Ejecutadas.');
+    F.orden=o;F.p.medidor=m;
+  }
   const falta=COMPS.find(c=>!F.sel[c.k].length);
   if(falta){F.open[falta.k]=true;render();toast(`Elige una opción en ${falta.label}.`);const i=COMPS.indexOf(falta);setTimeout(()=>document.querySelectorAll('.comp')[i]?.scrollIntoView({block:'center'}),50);return;}
   const res=compute(F.sel);
@@ -743,13 +770,13 @@ async function reabrir(){
 /* ---------- exportar ---------- */
 function paraExportar(r,fotos){
   const d=r.datos;
-  return{IdInspeccion:r.id,Title:r.orden,Fecha_Inspeccion:r.fecha,Supervisor:r.supervisor,Supervisor_asignado:r.supervisor_asignado||'',
+  return{IdInspeccion:r.id,Title:refDe(r.orden,d),Fecha_Inspeccion:r.fecha,Supervisor:r.supervisor,Supervisor_asignado:r.supervisor_asignado||'',
     ...Object.fromEntries(COMPS.map(c=>['Hallazgos_'+c.k,r.res.hall['Hallazgos_'+c.k]])),
     ...Object.fromEntries(COMPS.map(c=>['Estado_'+c.k,r.res.est['Estado_'+c.k]])),
     Resultado_inspeccion:r.res.resultado,Observaciones_inspeccion:r.obs||'',
-    Direccion:d.direccion||'',Medidor_Instalado:d.medidor||'',Localidad:d.localidad||'',
+    Direccion:d.direccion||'',Medidor_Instalado:d.medidor||'',Marca_Medidor:d.marca||'',Sin_Orden_Cargada:d.manual?'SI':'NO',Orden_Incorporacion:d.manual?(r.orden||''):'',Localidad:d.localidad||'',
     Fotos:fotos,
-    Hallazgos_detalle:r.res.detalle.map(x=>({IdHallazgo:`${r.id}_${x.Codigo}`,IdInspeccion:r.id,Orden_de_Servicio:r.orden,...x}))};
+    Hallazgos_detalle:r.res.detalle.map(x=>({IdHallazgo:`${r.id}_${x.Codigo}`,IdInspeccion:r.id,Orden_de_Servicio:refDe(r.orden,d),...x}))};
 }
 async function exportar(ids){
   try{
