@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>GS Calidad Técnica · Administración</title>
+<style>
+:root{--bg:#f4f6f8;--c:#fff;--t:#14181d;--m:#5b6773;--o:#ff6600;--b:#dde3e9;--ok:#157347;--er:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:15px/1.45 system-ui,"Segoe UI",Roboto,sans-serif}
+header{background:#14181d;color:#fff;padding:14px 24px;border-bottom:4px solid var(--o)}header h1{margin:0;font-size:19px}header p{margin:2px 0 0;color:#b9c4cf;font-size:13px}
+main{max-width:1000px;margin:0 auto;padding:18px}
+.card{background:var(--c);border:1px solid var(--b);border-radius:12px;padding:16px;margin-bottom:14px}.card h2{margin:0 0 8px;font-size:16px}
+button,.btn{background:var(--o);color:#14181d;border:0;border-radius:10px;padding:10px 16px;font:700 14px inherit;cursor:pointer}button.s{background:#e7ecf1;color:var(--t)}button:disabled{opacity:.45;cursor:not-allowed}
+.drop{border:2px dashed #b7c1cb;border-radius:12px;padding:26px;text-align:center;color:var(--m)}.drop.on{border-color:var(--o);background:#fff5ee}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:7px 8px;border-bottom:1px solid var(--b);text-align:left}th{color:var(--m);font-weight:600}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:700;background:#e7ecf1}.ok{color:var(--ok)}.er{color:var(--er)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}small,.m{color:var(--m)}label.ck{display:flex;gap:8px;align-items:flex-start;margin:6px 0}
+</style></head><body>
+<header><h1>Calidad Técnica ESPT · Administración de pendientes</h1><p>Carga el CSV/TXT, revisa por supervisor y genera los paquetes. Todo se procesa en tu navegador; nada se envía hasta que publiques.</p></header>
+<main>
+<div class="card"><h2>1. Archivo de órdenes</h2>
+<div class="drop" id="drop">Arrastra aquí el CSV, TXT o JSON, o <button class="s" id="pick" type="button">elige el archivo</button><input id="f" type="file" accept=".csv,.txt,.json" hidden></div></div>
+<div id="res" hidden>
+<div class="card"><h2>2. Revisión</h2><div id="sum" class="row"></div><div id="warn"></div>
+<table id="tb"><thead><tr><th>Supervisor</th><th>Órdenes</th><th>Estado</th></tr></thead><tbody></tbody></table></div>
+<div class="card"><h2>3. Datos personales</h2>
+<label class="ck"><input type="checkbox" id="xid" checked><span>No incluir <b>identificación</b> del usuario (recomendado)</span></label>
+<label class="ck"><input type="checkbox" id="xcel" checked><span>No incluir <b>celular</b> (recomendado)</span></label>
+<small>Se publica solo lo necesario para inspeccionar. Si la app necesita un campo que quitaste, avísame.</small></div>
+<div class="card"><h2>4. Entregar</h2><div class="row">
+<button id="dl" type="button">Descargar paquetes por supervisor (.zip)</button>
+<button id="pub" type="button" disabled title="Se activa cuando se conecta el servicio de datos">Publicar en línea</button></div>
+<p class="m" id="pubnote">Publicar en línea se activa al configurar el servicio de datos protegido (<code>admin-config.js</code>). Mientras tanto, los paquetes por supervisor se pueden enviar y abrir en la app.</p></div>
+</div></main>
+<script>
+const SUPERVISORES=['Camilo Cano','Jairo Vargas','Diego Sastre','Lisimaco Rodriguez','Deivi Caicedo','Heidi Diaz','Erik Romero'];
+const n=s=>String(s==null?'':s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+const PMAP={ordendeservicio:'orden',title:'orden',fechaejecucion:'fecha_ejec',medidorinstalado:'medidor',marca:'marca',cuadrilla:'cuadrilla',resultadoos:'resultado_os',observacionesos:'obs_os',supervisor:'supervisor',identificacion:'identificacion',nombreusuario:'usuario',celular:'celular',direccionpredio:'direccion',localidad:'localidad',sectorbarrio:'barrio',latitudy:'lat',longitudx:'lng',fechadeactualizacion:'fecha_act'};
+function parseCSV(t){if(t.charCodeAt(0)===0xFEFF)t=t.slice(1);const first=t.split(/\r?\n/,1)[0];const d=first.split(';').length>first.split(',').length?';':(first.split('\t').length>first.split(',').length?'\t':',');
+const rows=[];let row=[],f='',q=false;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}else if(c==='"')q=true;else if(c===d){row.push(f);f=''}else if(c==='\n'||c==='\r'){if(c==='\r'&&t[i+1]==='\n')i++;row.push(f);f='';rows.push(row);row=[]}else f+=c}
+if(f!==''||row.length){row.push(f);rows.push(row)}return rows}
+function filas(text,name){const tt=text.trim();if(/\.json$/i.test(name)||tt[0]==='['||tt[0]==='{'){const j=JSON.parse(tt);return Array.isArray(j)?j:(j.value||j.items||j.pendientes||j.data||[])}
+const rows=parseCSV(text).filter(r=>r.some(c=>String(c).trim()!==''));if(!rows.length)return[];const head=rows[0];return rows.slice(1).map(r=>{const o={};head.forEach((k,i)=>o[k]=r[i]);return o})}
+const val=v=>{if(v==null)return'';if(typeof v==='object')return String(v.Value??v.value??v.Title??'');return String(v).trim()};
+function norm(o){const p={};for(const[k,v]of Object.entries(o)){const m=PMAP[n(k)];if(m&&!p[m])p[m]=val(v)}if(p.orden)p.orden=p.orden.replace(/\.0+$/,'');for(const k of['lat','lng'])if(p[k])p[k]=p[k].replace(',','.');return p}
+const $=id=>document.getElementById(id);let G={};let info={};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function leer(file){const buf=await file.arrayBuffer();let t=new TextDecoder('utf-8').decode(buf);if(t.includes('�'))t=new TextDecoder('windows-1252').decode(buf);return t}
+async function cargar(file){
+  try{const rows=filas(await leer(file),file.name);const seen=new Set();let sinOrden=0,dup=0,sinSup=0;G={};
+    const conocidos=new Map(SUPERVISORES.map(s=>[n(s),s]));const desconocidos=new Set();
+    for(const r of rows){const p=norm(r);if(!/^\d{5,}$/.test(p.orden||'')){sinOrden++;continue}if(seen.has(p.orden)){dup++;continue}seen.add(p.orden);
+      let s=conocidos.get(n(p.supervisor));if(!p.supervisor){sinSup++;s='(sin supervisor)'}else if(!s){desconocidos.add(p.supervisor);s=p.supervisor}
+      p.supervisor=s==='(sin supervisor)'?'':s;(G[s]=G[s]||[]).push(p)}
+    info={total:seen.size,sinOrden,dup,sinSup,desconocidos:[...desconocidos],conocidos};render(file.name)}
+  catch(e){console.error(e);alert('No pude leer ese archivo. Revisa que sea CSV/TXT/JSON con la columna Orden_de_Servicio.')}}
+function render(name){$('res').hidden=false;
+  $('sum').innerHTML=`<span class="pill">${esc(name)}</span><span class="pill ok">${info.total} órdenes</span>`+(info.dup?`<span class="pill">${info.dup} repetidas omitidas</span>`:'')+(info.sinOrden?`<span class="pill er">${info.sinOrden} filas sin orden válida</span>`:'');
+  let w='';if(info.sinSup)w+=`<p class="er">⚠ ${info.sinSup} órdenes sin supervisor. No se entregarán a nadie hasta que las asignes.</p>`;
+  if(info.desconocidos.length)w+=`<p class="er">⚠ Supervisores que no están en la app: ${info.desconocidos.map(esc).join(', ')}. Revisa la ortografía.</p>`;$('warn').innerHTML=w;
+  const keys=Object.keys(G).sort((a,b)=>a.localeCompare(b,'es'));
+  $('tb').tBodies[0].innerHTML=keys.map(k=>{const bad=k==='(sin supervisor)'||info.desconocidos.includes(k);return`<tr><td>${esc(k)}</td><td>${G[k].length}</td><td class="${bad?'er':'ok'}">${bad?'Revisar':'Listo'}</td></tr>`}).join('');}
+function limpio(p){const q={...p};if($('xid').checked)delete q.identificacion;if($('xcel').checked)delete q.celular;return q}
+/* ZIP sin compresión */
+const CRCT=(()=>{const t=new Uint32Array(256);for(let i=0;i<256;i++){let c=i;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[i]=c>>>0}return t})();
+const crc32=u=>{let c=0xFFFFFFFF;for(let i=0;i<u.length;i++)c=CRCT[(c^u[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0};
+function makeZip(files){const enc=new TextEncoder(),ch=[],cd=[];let off=0;const d=new Date();const time=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1),date=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();
+for(const f of files){const nm=enc.encode(f.name),crc=crc32(f.data),len=f.data.length;const lh=new DataView(new ArrayBuffer(30));lh.setUint32(0,0x04034b50,true);lh.setUint16(4,20,true);lh.setUint16(6,0x0800,true);lh.setUint16(10,time,true);lh.setUint16(12,date,true);lh.setUint32(14,crc,true);lh.setUint32(18,len,true);lh.setUint32(22,len,true);lh.setUint16(26,nm.length,true);ch.push(lh.buffer,nm,f.data);
+const c=new DataView(new ArrayBuffer(46));c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(12,time,true);c.setUint16(14,date,true);c.setUint32(16,crc,true);c.setUint32(20,len,true);c.setUint32(24,len,true);c.setUint16(28,nm.length,true);c.setUint32(42,off,true);cd.push(c.buffer,nm);off+=30+nm.length+len}
+const cds=cd.reduce((a,b)=>a+(b.byteLength!==undefined?b.byteLength:b.length),0);const e=new DataView(new ArrayBuffer(22));e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cds,true);e.setUint32(16,off,true);return new Blob([...ch,...cd,e.buffer],{type:'application/zip'})}
+$('dl').onclick=()=>{const enc=new TextEncoder(),fecha=new Date().toISOString().slice(0,10);const files=[];
+  for(const[k,v]of Object.entries(G)){if(k==='(sin supervisor)')continue;const json={esquema:'GS_Calidad_Tecnica_ESPT_Pendientes_v1',generado:new Date().toISOString(),supervisor:k,total:v.length,pendientes:v.map(limpio)};
+    files.push({name:`Pendientes_${n(k)}_${fecha}.json`,data:enc.encode(JSON.stringify(json))})}
+  if(!files.length){alert('No hay órdenes con supervisor para entregar.');return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(makeZip(files));a.download=`Pendientes_por_supervisor_${fecha}.zip`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)};
+$('pick').onclick=()=>$('f').click();$('f').onchange=e=>{if(e.target.files[0])cargar(e.target.files[0])};
+const dr=$('drop');['dragover','dragenter'].forEach(ev=>dr.addEventListener(ev,e=>{e.preventDefault();dr.classList.add('on')}));['dragleave','drop'].forEach(ev=>dr.addEventListener(ev,e=>{e.preventDefault();dr.classList.remove('on')}));
+dr.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)cargar(f)});
+</script></body></html>
