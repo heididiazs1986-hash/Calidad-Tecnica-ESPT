@@ -93,6 +93,8 @@ details p{font-size:12px;color:var(--muted);margin-top:6px;white-space:pre-wrap;
 .opts{margin-top:8px;display:flex;flex-direction:column;gap:5px}
 .opt{display:flex;gap:10px;align-items:center;font-size:13.5px;border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--surface);text-align:left;width:100%}
 .opt .box{width:18px;height:18px;border-radius:5px;border:2px solid var(--sec);flex:none;position:relative}
+.opt.dis{opacity:.45}
+.chip.empty-chip{background:rgba(255,102,0,.12);border-color:var(--p)}
 .opt.on{border-color:var(--p);background:rgba(255,102,0,.09)}
 .opt.on .box{background:var(--p);border-color:var(--p)}
 .opt.on .box:after{content:"";position:absolute;left:4.5px;top:.5px;width:5px;height:9px;border:solid #1B1F23;border-width:0 2.4px 2.4px 0;transform:rotate(45deg)}
@@ -326,11 +328,13 @@ const nsnDe=k=>S.byComp[k].find(isConf);
 const defaultSel=()=>{const s={};for(const c of COMPS){const i=nsnDe(c.k);s[c.k]=i?[i.cod]:[];}return s;};
 function toggle(k,cod){
   const it=S.byCod[cod];let cur=S.F.sel[k].slice();
-  if(isConf(it))cur=[cod];
-  else{cur=cur.filter(x=>!isConf(S.byCod[x]));cur=cur.includes(cod)?cur.filter(x=>x!==cod):[...cur,cod];if(!cur.length){const i=nsnDe(k);cur=i?[i.cod]:[];}}
-  S.F.sel[k]=cur;S.F.dirty=true;draft();
+  const conSN=cur.some(x=>isConf(S.byCod[x]));
+  if(isConf(it)){cur=cur.includes(cod)?[]:[cod];}
+  else if(conSN){toast('Desmarca «Elemento sin novedades» para elegir un hallazgo.');return false;}
+  else cur=cur.includes(cod)?cur.filter(x=>x!==cod):[...cur,cod];
+  S.F.sel[k]=cur;S.F.dirty=true;draft();return true;
 }
-const estadoDe=codes=>codes.every(c=>isConf(S.byCod[c]))?'CONFORME':'NO CONFORME';
+const estadoDe=codes=>!codes.length?'SIN ELEGIR':codes.every(c=>isConf(S.byCod[c]))?'CONFORME':'NO CONFORME';
 function compute(sel){
   const hall={},est={},detalle=[];let bad=false;
   for(const c of COMPS){
@@ -590,7 +594,7 @@ let dT;
 function draft(){clearTimeout(dT);dT=setTimeout(()=>{const F=S.F;if(!F||F.ro)return;dbPut('meta',{sel:F.sel,obs:F.obs,nuevas:F.nuevas,removed:F.removed},'draft:'+F.id).catch(()=>{});},250);}
 async function cargarBorrador(){
   const F=S.F,d=await dbGet('meta','draft:'+F.id);if(!d)return;
-  for(const c of COMPS){const ok=(d.sel[c.k]||[]).filter(x=>S.byCod[x]);if(ok.length)F.sel[c.k]=ok;}
+  for(const c of COMPS){if(Array.isArray(d.sel[c.k]))F.sel[c.k]=d.sel[c.k].filter(x=>S.byCod[x]);}
   F.obs=d.obs||'';F.removed=d.removed||[];
   const all=await fotosDe(F.id);
   F.nuevas=(d.nuevas||[]).filter(id=>all.some(f=>f.id===id));
@@ -648,11 +652,12 @@ function compCard(c){
     const codes=F.sel[c.k],est=estadoDe(codes),open=!!F.open[c.k];
     const fs=F.fotos.filter(f=>f.comp===c.k);
     card.replaceChildren(...[
-      h('div',{class:'hd'},h('h3',null,c.label),h('span',{class:'badge '+(est==='CONFORME'?'ok':'bad')},est)),
-      h('div',{class:'chips'},codes.map(cd=>h('span',{class:'chip'+(isConf(S.byCod[cd])?'':' bad')},S.byCod[cd].hall))),
+      h('div',{class:'hd'},h('h3',null,c.label),h('span',{class:'badge '+(est==='CONFORME'?'ok':est==='SIN ELEGIR'?'warn':'bad')},est)),
+      h('div',{class:'chips'},codes.length?codes.map(cd=>h('span',{class:'chip'+(isConf(S.byCod[cd])?'':' bad')},S.byCod[cd].hall)):h('span',{class:'chip empty-chip'},'Elige al menos una opción')),
       F.ro?null:h('button',{class:'link',style:'margin-top:8px',onclick:()=>{F.open[c.k]=!open;draw();}},open?'Cerrar lista':'Cambiar / agregar hallazgos'),
       open?h('div',{class:'opts'},S.byComp[c.k].map(it=>{const on=codes.includes(it.cod);
-        return h('button',{class:'opt'+(on?' on':''),'aria-pressed':on,onclick:()=>{toggle(c.k,it.cod);draw();}},h('span',{class:'box'}),it.hall);})):null,
+        const bloq=!on&&!isConf(it)&&codes.some(x=>isConf(S.byCod[x]));
+        return h('button',{class:'opt'+(on?' on':'')+(bloq?' dis':''),'aria-pressed':on,'aria-disabled':bloq,onclick:()=>{toggle(c.k,it.cod);draw();}},h('span',{class:'box'}),it.hall);})):null,
       h('div',{class:'photos'},fs.map(f=>h('div',{class:'th'},h('img',{src:f.url,alt:'Foto '+c.label}),F.ro?null:h('button',{class:'x','aria-label':'Quitar foto',onclick:()=>quitarFoto(f,draw)},'×'))),
         F.ro?null:[h('button',{class:'pbtn',onclick:()=>fotos(c.k,true,draw)},ic('cam'),'Cámara'),h('button',{class:'pbtn',onclick:()=>fotos(c.k,false,draw)},ic('img'),'Galería')])].filter(Boolean));
   };
@@ -691,7 +696,10 @@ async function quitarFoto(f,redraw){
   F.dirty=true;draft();redraw();
 }
 async function guardar(){
-  const F=S.F,res=compute(F.sel);
+  const F=S.F;
+  const falta=COMPS.find(c=>!F.sel[c.k].length);
+  if(falta){F.open[falta.k]=true;render();toast(`Elige una opción en ${falta.label}.`);const i=COMPS.indexOf(falta);setTimeout(()=>document.querySelectorAll('.comp')[i]?.scrollIntoView({block:'center'}),50);return;}
+  const res=compute(F.sel);
   if(res.resultado==='NO CONFORME'&&F.fotos.length===0&&!(await confirmar('Hay hallazgos y no tomaste fotos de evidencia. ¿Guardar de todas formas?','Guardar')))return;
   const ahora=new Date().toISOString();
   const rec={id:F.id,orden:F.orden,supervisor:S.sup,supervisor_asignado:F.p.supervisor||'',fecha:F.existing?F.existing.fecha:hoy(),creado:F.existing?F.existing.creado:ahora,actualizado:ahora,
