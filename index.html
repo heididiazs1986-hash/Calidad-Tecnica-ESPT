@@ -1,0 +1,742 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>GS Calidad Técnica</title>
+<meta name="description" content="Inspección de calidad técnica de actividades ESPT · Gestión Social">
+<meta name="theme-color" content="#FF6600">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<script>try{var t=localStorage.getItem('gs-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=t;}catch(e){}</script>
+<style>
+:root{
+  --bg:#FEFEFF;--surface:#FEFEFF;--s2:#F2F4F6;--text:#1B1F23;--muted:#5B6670;--line:#DDE2E7;
+  --p:#FF6600;--btn:#FF6600;--btnfg:#1B1F23;--sec:#C1C7CE;--ter:#79D1FF;
+  --ok:#17703F;--okbg:#E3F5EA;--bad:#B3261E;--badbg:#FDE8E6;--badline:#F3C3BF;
+  --shadow:0 8px 30px rgba(20,30,40,.12);--hdr-h:170px;
+  --f-head:Manrope,"Segoe UI","Helvetica Neue",Arial,sans-serif;--f-body:"Open Sans","Segoe UI","Helvetica Neue",Arial,sans-serif;
+}
+:root[data-theme=dark]{
+  --bg:#12161A;--surface:#1B2126;--s2:#242B31;--text:#ECEFF2;--muted:#9AA6B1;--line:#333C44;
+  --ok:#6FD19A;--okbg:#16301F;--bad:#FF8A80;--badbg:#3A1E1C;--badline:#5A2A27;--shadow:0 8px 30px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{font-family:var(--f-body);background:var(--bg);color:var(--text);font-size:15px;line-height:1.4;-webkit-text-size-adjust:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,select,textarea{font:inherit;color:inherit}
+.app{max-width:760px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;background:var(--bg);position:relative}
+@media(min-width:800px){body{background:linear-gradient(135deg,#EEF1F4,#E3E8ED)}:root[data-theme=dark] body{background:#0C0F12}.app{margin:20px auto;min-height:calc(100% - 40px);border-radius:22px;box-shadow:var(--shadow);overflow:hidden}}
+/* encabezado */
+.top{position:relative;height:var(--hdr-h);flex:none;overflow:hidden;background:var(--bg)}
+body[data-view=pend]{--hdr-h:170px}
+body[data-view=ejec],body[data-view=env]{--hdr-h:118px}
+body[data-view=form]{--hdr-h:66px}
+.top .scene{position:absolute;inset:0;width:100%;height:100%;display:none}
+body[data-view=pend] .top .scene.sup{display:block}
+body[data-view=ejec] .top .scene.simple,body[data-view=env] .top .scene.simple{display:block}
+:root[data-theme=dark] .top .scene{opacity:.82}
+.bar{position:absolute;left:0;right:0;top:max(14px,env(safe-area-inset-top));padding:0 16px;display:flex;align-items:center;gap:11px}
+body[data-view=form] .bar{top:12px}
+.logo{width:42px;height:42px;border-radius:12px;background:var(--p);display:grid;place-items:center;flex:none;box-shadow:0 4px 10px rgba(255,102,0,.35)}
+.ttl{font:800 17px/1.1 var(--f-head);color:#1B1F23}
+.sub{font-size:11.5px;color:#2C333A;margin-top:2px}
+:root[data-theme=dark] .ttl,:root[data-theme=dark] .sub{color:#1B1F23}
+.sp{margin-left:auto;display:flex;gap:8px;align-items:center}
+.chip-sup{background:#FEFEFF;color:#1B1F23;border:1px solid var(--line);border-radius:20px;padding:6px 11px;font:700 12px var(--f-head);display:flex;align-items:center;gap:6px;box-shadow:0 2px 6px rgba(0,0,0,.08);white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ter)}
+.iconbtn{width:36px;height:36px;border-radius:50%;background:#FEFEFF;color:#1B1F23;display:grid;place-items:center;border:1px solid var(--line);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+/* contenido */
+main{flex:1;padding:12px 14px 96px;display:flex;flex-direction:column;gap:10px}
+.search{display:flex;align-items:center;gap:8px;height:44px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);padding:0 12px}
+.search:focus-within{border-color:var(--p)}
+.search input{flex:1;border:0;outline:0;background:none;min-width:0}
+.sum{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:0 2px}
+.sum b{color:var(--text)}
+.sum button{color:var(--text);font-weight:700;text-decoration:underline;text-decoration-color:var(--p);text-decoration-thickness:2px;text-underline-offset:3px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 13px;box-shadow:0 2px 8px rgba(30,40,50,.05)}
+.item{display:flex;gap:10px;align-items:center;border-left:4px solid var(--p);text-align:left;width:100%}
+.item .a{font:700 14.5px var(--f-head)}
+.item .b{font-size:12px;color:var(--muted);margin-top:2px}
+.item .go{margin-left:auto;color:var(--sec);font-size:22px;flex:none}
+.empty{text-align:center;padding:34px 18px;color:var(--muted);display:flex;flex-direction:column;gap:12px;align-items:center}
+.empty b{color:var(--text);font:800 16px var(--f-head)}
+.btn{min-height:46px;border-radius:13px;padding:0 18px;font:800 15px var(--f-head);display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.primary{background:var(--btn);color:var(--btnfg);box-shadow:0 6px 14px rgba(255,102,0,.32)}
+.btn.primary[disabled]{background:var(--sec);box-shadow:none;opacity:.7;cursor:not-allowed}
+.btn.ghost{border:1.5px solid var(--line);background:var(--surface)}
+.btn.danger{border:1.5px solid var(--badline);color:var(--bad);background:var(--surface)}
+.btn.block{width:100%}
+.link{font:700 12.5px var(--f-head);text-decoration:underline;text-decoration-color:var(--p);text-decoration-thickness:2px;text-underline-offset:3px;padding:4px 0;align-self:flex-start}
+.badge{font:800 10.5px var(--f-head);border-radius:20px;padding:3px 9px;letter-spacing:.3px;white-space:nowrap;display:inline-block}
+.badge.ok{background:var(--okbg);color:var(--ok)}.badge.bad{background:var(--badbg);color:var(--bad)}.badge.warn{background:rgba(255,102,0,.16)}
+.h2{font:800 12px var(--f-head);color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:4px 2px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin-top:10px}
+.grid div{font-size:11.5px;color:var(--muted);min-width:0}.grid b{display:block;font-weight:600;font-size:13px;color:var(--text);overflow-wrap:anywhere}
+.grid a{color:var(--text);text-decoration-color:var(--p);text-underline-offset:3px}
+details summary{cursor:pointer;font:700 12.5px var(--f-head);margin-top:10px}
+details p{font-size:12px;color:var(--muted);margin-top:6px;white-space:pre-wrap;overflow-wrap:anywhere}
+/* formulario */
+.fhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.back{font:800 14px var(--f-head);display:flex;align-items:center;gap:4px;padding:6px 2px}
+.comp .hd{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.comp h3{font:800 15px var(--f-head)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{font-size:12.5px;background:var(--s2);border:1px solid var(--line);border-radius:9px;padding:4px 9px}
+.chip.bad{background:var(--badbg);border-color:var(--badline);color:var(--bad)}
+.opts{margin-top:8px;display:flex;flex-direction:column;gap:5px}
+.opt{display:flex;gap:10px;align-items:center;font-size:13.5px;border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--surface);text-align:left;width:100%}
+.opt .box{width:18px;height:18px;border-radius:5px;border:2px solid var(--sec);flex:none;position:relative}
+.opt.on{border-color:var(--p);background:rgba(255,102,0,.09)}
+.opt.on .box{background:var(--p);border-color:var(--p)}
+.opt.on .box:after{content:"";position:absolute;left:4.5px;top:.5px;width:5px;height:9px;border:solid #1B1F23;border-width:0 2.4px 2.4px 0;transform:rotate(45deg)}
+.photos{display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap}
+.th{width:54px;height:54px;border-radius:10px;position:relative;overflow:hidden;background:var(--s2);border:1px solid var(--line)}
+.th img{width:100%;height:100%;object-fit:cover;display:block}
+.th .x{position:absolute;top:2px;right:2px;width:20px;height:20px;border-radius:50%;background:rgba(27,31,35,.78);color:#fff;font-size:13px;line-height:20px;text-align:center}
+.pbtn{font:700 12px var(--f-head);border:1.5px dashed var(--sec);border-radius:10px;height:54px;padding:0 12px;display:flex;align-items:center;gap:6px;color:var(--muted)}
+textarea.obs{width:100%;min-height:84px;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface);resize:vertical;margin-top:8px;outline:0}
+textarea.obs:focus,.sel:focus{border-color:var(--p)}
+.sel{width:100%;height:46px;border:1.5px solid var(--line);border-radius:12px;padding:0 12px;background:var(--surface);outline:0}
+.savebar{position:sticky;bottom:64px;padding:10px 0 4px;background:linear-gradient(180deg,rgba(254,254,255,0),var(--bg) 40%);display:flex;flex-direction:column;gap:8px;z-index:3}
+:root[data-theme=dark] .savebar{background:linear-gradient(180deg,rgba(18,22,26,0),var(--bg) 40%)}
+body[data-view=form] .savebar{bottom:0}
+.row{display:flex;align-items:center;gap:11px}
+.cb{width:24px;height:24px;border-radius:7px;border:2px solid var(--sec);flex:none;position:relative}
+.cb.on{background:var(--p);border-color:var(--p)}
+.cb.on:after{content:"";position:absolute;left:6.5px;top:1.5px;width:6px;height:11px;border:solid #1B1F23;border-width:0 2.6px 2.6px 0;transform:rotate(45deg)}
+.fname{font:800 15px var(--f-head);overflow-wrap:anywhere;margin-top:3px}
+.credit{text-align:center;font-size:11px;color:var(--muted);padding:14px 0 2px}
+/* barra inferior */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;max-width:760px;margin:0 auto;height:calc(64px + env(safe-area-inset-bottom));padding:6px 8px env(safe-area-inset-bottom);background:var(--surface);border-top:1px solid var(--line);display:flex}
+@media(min-width:800px){.tabs{bottom:20px;border-radius:0 0 22px 22px}}
+body[data-view=form] .tabs{display:none}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:700 11px var(--f-head);color:var(--muted);position:relative}
+.tab svg{width:24px;height:24px}
+.tab.on{color:var(--text)}
+.tab.on:before{content:"";position:absolute;top:-6px;width:32px;height:3px;border-radius:3px;background:var(--p)}
+.tab .n{position:absolute;top:0;left:calc(50% + 8px);background:var(--p);color:#1B1F23;border-radius:10px;font:800 10px var(--f-head);padding:1px 6px;min-width:18px;text-align:center}
+/* diálogo y aviso */
+dialog{border:0;border-radius:18px;padding:0;max-width:min(92vw,420px);width:100%;background:var(--surface);color:var(--text);box-shadow:var(--shadow);margin:auto}
+dialog::backdrop{background:rgba(20,26,32,.55)}
+.dlgbox{padding:18px;display:flex;flex-direction:column;gap:12px}
+.dlgbox h3{font:800 17px var(--f-head)}
+.dlgbox p{color:var(--muted);font-size:14px}
+.dlgbtns{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:4px}
+.menu{display:flex;flex-direction:column;gap:8px}
+.menu .btn{justify-content:flex-start;width:100%;font-size:14px}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#1B1F23;color:#FEFEFF;border-radius:12px;padding:11px 16px;font-size:13.5px;z-index:20;max-width:88vw;box-shadow:var(--shadow);text-align:center}
+.muted{color:var(--muted)}
+</style>
+</head>
+<body data-view="pend">
+<div class="app">
+  <header class="top" id="top">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372 170" preserveAspectRatio="xMidYMax slice" class="scene sup" role="img" aria-label="Supervisor con casco blanco en primer plano, con casas, postes y medidor al fondo">
+  <defs>
+    <linearGradient id="cielo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#79D1FF" stop-opacity=".85"/><stop offset=".55" stop-color="#79D1FF" stop-opacity=".30"/><stop offset="1" stop-color="#FEFEFF"/></linearGradient>
+    <clipPath id="vestClip">
+      <path d="M296 135 L311 135 L318 152 L318 170 L282 170 L282 155 Q282 138 296 135Z"/>
+      <path d="M340 135 L325 135 L318 152 L318 170 L354 170 L354 155 Q354 138 340 135Z"/>
+    </clipPath>
+  </defs>
+  <rect width="372" height="170" fill="url(#cielo)"/>
+  <!-- sol y nubes -->
+  <circle cx="60" cy="116" r="34" fill="#FF6600" opacity=".22"/><circle cx="60" cy="116" r="23" fill="#FF6600"/>
+  <g fill="#FEFEFF"><ellipse cx="146" cy="108" rx="17" ry="6"/><ellipse cx="156" cy="103" rx="10" ry="6"/><ellipse cx="136" cy="104" rx="8" ry="5"/>
+  <ellipse cx="232" cy="96" rx="14" ry="5"/><ellipse cx="240" cy="92" rx="8" ry="5"/></g>
+  <!-- pájaros -->
+  <g fill="none" stroke="#3A4149" stroke-width="1.4" stroke-linecap="round"><path d="M196 92 q3 -4 6 0 q3 -4 6 0"/><path d="M212 84 q2.5 -3.4 5 0 q2.5 -3.4 5 0"/></g>
+  <!-- cerros -->
+  <path d="M0 122 C50 100 100 114 160 102 C220 90 280 108 372 94 L372 170 L0 170Z" fill="#C1C7CE"/>
+  <path d="M0 136 C70 114 130 132 200 120 C270 108 320 126 372 114 L372 170 L0 170Z" fill="#FF6600" opacity=".5"/>
+  <!-- casas -->
+  <g><rect x="16" y="120" width="30" height="20" fill="#FEFEFF"/><path d="M12 120 L31.0 101.4 L50 120Z" fill="#FF6600"/><rect x="20" y="125" width="7.8" height="6.4" rx="1" fill="#79D1FF"/><rect x="34.6" y="128.4" width="7.2" height="11.6" fill="#3A4149"/><rect x="54" y="126" width="24" height="16" fill="#FEFEFF"/><path d="M50 126 L66.0 111.1 L82 126Z" fill="#FF6600"/><rect x="58" y="131" width="6.2" height="5.1" rx="1" fill="#79D1FF"/><rect x="68.9" y="132.7" width="5.8" height="9.3" fill="#3A4149"/><rect x="86" y="128" width="20" height="14" fill="#FEFEFF"/><path d="M82 128 L96.0 115.6 L110 128Z" fill="#FF6600"/><rect x="90" y="133" width="5.2" height="4.5" rx="1" fill="#79D1FF"/><rect x="98.4" y="133.9" width="4.8" height="8.1" fill="#3A4149"/><rect x="112" y="131" width="15" height="10" fill="#FEFEFF"/><path d="M108 131 L119.5 121.7 L131 131Z" fill="#FF6600"/><rect x="121.3" y="135.2" width="3.6" height="5.8" fill="#3A4149"/></g>
+  <!-- cables y postes -->
+  <g fill="none" stroke="#3A4149" stroke-width="1.2" opacity=".75">
+    <path d="M168 92 Q130 106 96 98 M168 92 Q118 100 70 96"/>
+    <path d="M168 92 Q200 104 232 98 M168 94 Q205 108 232 100"/>
+    <path d="M232 98 Q262 106 300 100"/>
+  </g>
+  <rect x="166" y="84" width="4.4" height="68" rx="1.4" fill="#4A525A"/>
+  <rect x="155" y="90" width="26" height="3.2" rx="1.4" fill="#3A4149"/>
+  <circle cx="157" cy="89" r="2" fill="#C1C7CE"/><circle cx="179" cy="89" r="2" fill="#C1C7CE"/><circle cx="168" cy="82" r="2" fill="#C1C7CE"/>
+  <rect x="174" y="98" width="12" height="17" rx="3.5" fill="#C1C7CE" stroke="#3A4149" stroke-width="1.2"/><rect x="174" y="103" width="12" height="2.2" fill="#3A4149"/>
+  <rect x="150" y="116" width="16" height="13" rx="2.6" fill="#FEFEFF" stroke="#C1C7CE" stroke-width="1.2"/>
+  <circle cx="158" cy="122.5" r="4.4" fill="#FEFEFF" stroke="#79D1FF" stroke-width="1.6"/>
+  <path d="M155.9 122.6l1.5 1.5 2.8 -3" fill="none" stroke="#FF6600" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="231" y="98" width="3.6" height="54" rx="1.2" fill="#4A525A"/><rect x="223" y="102" width="20" height="2.6" rx="1.2" fill="#3A4149"/>
+  <!-- suelo -->
+  <path d="M0 150 C80 138 150 150 230 144 C300 140 340 148 372 144 L372 170 L0 170Z" fill="#FF6600"/>
+  <path d="M0 160 C90 152 160 162 250 156 C310 153 346 158 372 156 L372 170 L0 170Z" fill="#3A4149" opacity=".22"/>
+  <!-- disco celeste detrás del supervisor -->
+  <circle cx="298" cy="152" r="54" fill="#79D1FF"/><circle cx="298" cy="152" r="44" fill="#FEFEFF" opacity=".4"/>
+  <!-- supervisor en primer plano: cabeza y torso -->
+  <g transform="translate(-20 0)">
+    <!-- brazo que saluda -->
+    <path d="M351 148 Q366 142 367 120" fill="none" stroke="#3A4149" stroke-width="11" stroke-linecap="round"/>
+    <circle cx="367" cy="113" r="6" fill="#E8B48F"/>
+    <!-- torso: camisa y chaleco -->
+    <path d="M280 170 L280 154 Q280 138 298 135 L338 135 Q356 138 356 154 L356 170 Z" fill="#3A4149"/>
+    <rect x="311" y="124" width="14" height="14" rx="5" fill="#D9A07C"/>
+    <path d="M296 135 L311 135 L318 152 L318 170 L282 170 L282 155 Q282 138 296 135Z" fill="#FF6600"/>
+    <path d="M340 135 L325 135 L318 152 L318 170 L354 170 L354 155 Q354 138 340 135Z" fill="#FF6600"/>
+    <g clip-path="url(#vestClip)"><rect x="280" y="151" width="76" height="4" fill="#FEFEFF"/><rect x="280" y="161" width="76" height="4" fill="#FEFEFF"/></g>
+    <!-- cabeza -->
+    <circle cx="303" cy="111" r="3.2" fill="#D9A07C"/><circle cx="333" cy="111" r="3.2" fill="#D9A07C"/>
+    <ellipse cx="318" cy="110" rx="15" ry="17" fill="#E8B48F"/>
+    <circle cx="312" cy="110" r="1.7" fill="#3A4149"/><circle cx="324" cy="110" r="1.7" fill="#3A4149"/>
+    <path d="M308.5 105.4 q3.5 -2 7 0 M320.5 105.4 q3.5 -2 7 0" fill="none" stroke="#3A4149" stroke-width="1.3" stroke-linecap="round"/>
+    <path d="M318 112 q2.2 3 0 4.2" fill="none" stroke="#D9A07C" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M311.5 119.6 Q318 125.4 324.5 119.6" fill="none" stroke="#9C5B3E" stroke-width="1.7" stroke-linecap="round"/>
+    <!-- casco blanco -->
+    <path d="M297 98 a21 26 0 0 1 42 0 Z" fill="#FEFEFF" stroke="#C1C7CE" stroke-width="1.2"/>
+    <rect x="315" y="72.6" width="6" height="24.6" rx="2" fill="#FF6600"/>
+    <path d="M302 90 a17 21 0 0 1 8 -14" fill="none" stroke="#FEFEFF" stroke-width="2" stroke-linecap="round" opacity=".9"/>
+    <rect x="291" y="95" width="54" height="6.4" rx="3.2" fill="#FEFEFF" stroke="#C1C7CE" stroke-width="1.2"/>
+    <!-- tablilla (primer plano) -->
+    <path d="M286 150 L284 166" fill="none" stroke="#3A4149" stroke-width="11" stroke-linecap="round"/>
+    <g transform="rotate(-8 292 158)">
+      <rect x="276" y="140" width="29" height="36" rx="3.4" fill="#79D1FF"/>
+      <rect x="279.5" y="146" width="22" height="27" rx="1.6" fill="#FEFEFF"/>
+      <rect x="285" y="137" width="9" height="7.4" rx="2" fill="#C1C7CE"/>
+      <path d="M283 154.6 l3.6 3.6 6.8 -7.2" fill="none" stroke="#FF6600" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="283" y="163" width="15" height="2" rx="1" fill="#C1C7CE"/><rect x="283" y="168" width="10" height="2" rx="1" fill="#C1C7CE"/>
+    </g>
+    <circle cx="303" cy="154" r="5.4" fill="#E8B48F"/>
+  </g>
+</svg>
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372 118" preserveAspectRatio="xMidYMax slice" class="scene simple" aria-hidden="true">
+  <defs><linearGradient id="cielo2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#79D1FF" stop-opacity=".85"/><stop offset=".6" stop-color="#79D1FF" stop-opacity=".28"/><stop offset="1" stop-color="#FEFEFF"/></linearGradient></defs>
+  <rect width="372" height="118" fill="url(#cielo2)"/>
+  <circle cx="318" cy="84" r="24" fill="#FF6600" opacity=".22"/><circle cx="318" cy="84" r="16" fill="#FF6600"/>
+  <g fill="#FEFEFF"><ellipse cx="250" cy="74" rx="15" ry="5"/><ellipse cx="258" cy="70" rx="9" ry="5"/></g>
+  <path d="M0 86 C50 66 100 80 160 70 C220 60 280 78 372 64 L372 118 L0 118Z" fill="#C1C7CE"/>
+  <path d="M0 98 C70 80 130 96 200 86 C270 76 320 92 372 82 L372 118 L0 118Z" fill="#FF6600" opacity=".5"/>
+  <g transform="translate(0 -22)"><rect x="24" y="120" width="26" height="18" fill="#FEFEFF"/><path d="M20 120 L37.0 103.9 L54 120Z" fill="#FF6600"/><rect x="28" y="125" width="6.8" height="5.8" rx="1" fill="#79D1FF"/><rect x="40.1" y="127.6" width="6.2" height="10.4" fill="#3A4149"/><rect x="58" y="126" width="20" height="14" fill="#FEFEFF"/><path d="M54 126 L68.0 113.6 L82 126Z" fill="#FF6600"/><rect x="62" y="131" width="5.2" height="4.5" rx="1" fill="#79D1FF"/><rect x="70.4" y="131.9" width="4.8" height="8.1" fill="#3A4149"/><rect x="86" y="128" width="17" height="12" fill="#FEFEFF"/><path d="M82 128 L94.5 117.5 L107 128Z" fill="#FF6600"/><rect x="96.5" y="133.0" width="4.1" height="7.0" fill="#3A4149"/></g>
+  <path d="M0 108 C80 98 150 108 230 102 C300 98 340 106 372 102 L372 118 L0 118Z" fill="#FF6600"/>
+</svg>
+
+    <div class="bar">
+      <div class="logo"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true"><circle cx="13" cy="13" r="10" stroke="#FEFEFF" stroke-width="2.4"/><path d="M8.2 13.4l3.3 3.3 6.4-6.8" stroke="#FEFEFF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div><div class="ttl" id="ttl">GS Calidad Técnica</div><div class="sub" id="sub">Inspección de actividades ESPT</div></div>
+      <div class="sp">
+        <button class="chip-sup" id="chipSup" aria-label="Cambiar supervisor"><span class="dot"></span><span id="supName">—</span></button>
+        <button class="iconbtn" id="btnMenu" aria-label="Menú"><svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor"><circle cx="9" cy="3" r="1.8"/><circle cx="9" cy="9" r="1.8"/><circle cx="9" cy="15" r="1.8"/></svg></button>
+      </div>
+    </div>
+  </header>
+  <main id="main"></main>
+  <nav class="tabs" id="tabs"></nav>
+</div>
+<dialog id="dlg"></dialog>
+<div class="toast" id="toast" hidden></div>
+<script src="catalogo-base.js"></script>
+<script>
+(()=>{
+'use strict';
+const VERSION='1.0.0';
+const SUPERVISORES=['Camilo Cano','Jairo Vargas','Diego Sastre','Lisimaco Rodriguez','Deivi Caicedo','Heidi Diaz','Erik Romero'];
+const COMPS=[
+  {k:'infor_OS',label:'Información OS',match:['informacionos','inforos']},
+  {k:'Medidor',label:'Medidor',match:['medidor']},
+  {k:'Celda',label:'Celda',match:['celda']},
+  {k:'Ducto',label:'Ducto 1"',match:['ducto1','ducto']},
+  {k:'Acometida',label:'Acometida',match:['acometida']},
+  {k:'SPT',label:'SPT',match:['spt']},
+];
+const $=(s,r=document)=>r.querySelector(s);
+const n=s=>String(s==null?'':s).normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
+const slug=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_+|_+$/g,'');
+const hoy=()=>new Date().toLocaleDateString('en-CA');
+function h(tag,props,...kids){
+  const e=document.createElement(tag);
+  if(props)for(const[k,v]of Object.entries(props)){
+    if(v==null||v===false)continue;
+    if(k==='class')e.className=v;
+    else if(k==='html')e.innerHTML=v;
+    else if(k.startsWith('on'))e.addEventListener(k.slice(2),v);
+    else if(v===true)e.setAttribute(k,'');
+    else e.setAttribute(k,v);
+  }
+  for(const kid of kids.flat(Infinity)){if(kid==null||kid===false)continue;e.append(kid.nodeType?kid:document.createTextNode(String(kid)));}
+  return e;
+}
+const ICON={
+  pend:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2.5"/><path d="M9 4h6v3H9z"/><path d="M8.5 12h7M8.5 16h5"/></svg>',
+  ejec:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M7.8 12.4l3 3 5.6-6"/></svg>',
+  env:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8 12 4l8.5 4v8L12 20l-8.5-4z"/><path d="M3.5 8 12 12l8.5-4M12 12v8"/></svg>',
+  cam:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.6-2.4h6.8L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.4"/></svg>',
+  img:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="m4 18 5-5 4 3.5 3-3 4.5 4"/></svg>',
+  search:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>',
+  back:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 8 12l7 7"/></svg>'
+};
+const ic=(k)=>h('span',{html:ICON[k],style:'display:inline-flex'});
+
+/* ---------- IndexedDB ---------- */
+let db;
+function openDB(){return new Promise((res,rej)=>{const r=indexedDB.open('gs-calidad-tecnica',1);
+  r.onupgradeneeded=()=>{const d=r.result;d.createObjectStore('meta');d.createObjectStore('pend',{keyPath:'orden'});d.createObjectStore('ejec',{keyPath:'id'});d.createObjectStore('fotos',{keyPath:'id'}).createIndex('insp','insp');};
+  r.onsuccess=()=>{db=r.result;res();};r.onerror=()=>rej(r.error);});}
+const rq=r=>new Promise((res,rej)=>{r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);});
+const st=(s,m='readonly')=>db.transaction(s,m).objectStore(s);
+const dbGet=(s,k)=>rq(st(s).get(k));
+const dbPut=(s,v,k)=>rq(k===undefined?st(s,'readwrite').put(v):st(s,'readwrite').put(v,k));
+const dbDel=(s,k)=>rq(st(s,'readwrite').delete(k));
+const dbAll=s=>rq(st(s).getAll());
+const dbClear=s=>rq(st(s,'readwrite').clear());
+const fotosDe=id=>rq(st('fotos').index('insp').getAll(id));
+
+/* ---------- estado ---------- */
+const S={view:'pend',sup:null,pend:[],ejec:[],cat:[],byCod:{},byComp:{},q:'',todas:false,pendFecha:null,selEnv:null,F:null};
+
+/* ---------- catálogo ---------- */
+const isConf=it=>n(it&&it.estado)==='conforme';
+function setCatalogo(list){
+  S.cat=list;S.byCod={};S.byComp={};COMPS.forEach(c=>S.byComp[c.k]=[]);
+  for(const it of list){S.byCod[it.cod]=it;}
+  for(const it of list){
+    if(n(it.activo)!=='si')continue;
+    const c=COMPS.find(c=>c.match.includes(n(it.comp)));
+    if(c)S.byComp[c.k].push(it);
+  }
+  for(const c of COMPS)S.byComp[c.k].sort((a,b)=>(isConf(b)-isConf(a)));
+}
+const catBase=()=>(window.CATALOGO_BASE||[]).map(r=>({cod:String(r[0]).trim(),comp:r[1],hall:String(r[2]).trim(),estado:r[3],activo:r[4]}));
+const nsnDe=k=>S.byComp[k].find(isConf);
+const defaultSel=()=>{const s={};for(const c of COMPS){const i=nsnDe(c.k);s[c.k]=i?[i.cod]:[];}return s;};
+function toggle(k,cod){
+  const it=S.byCod[cod];let cur=S.F.sel[k].slice();
+  if(isConf(it))cur=[cod];
+  else{cur=cur.filter(x=>!isConf(S.byCod[x]));cur=cur.includes(cod)?cur.filter(x=>x!==cod):[...cur,cod];if(!cur.length){const i=nsnDe(k);cur=i?[i.cod]:[];}}
+  S.F.sel[k]=cur;S.F.dirty=true;
+}
+const estadoDe=codes=>codes.every(c=>isConf(S.byCod[c]))?'CONFORME':'NO CONFORME';
+function compute(sel){
+  const hall={},est={},detalle=[];let bad=false;
+  for(const c of COMPS){
+    const items=sel[c.k].map(x=>S.byCod[x]).filter(Boolean);
+    hall['Hallazgos_'+c.k]=items.map(i=>i.hall).join(' / ');
+    const nc=items.some(i=>!isConf(i));est['Estado_'+c.k]=nc?'NO CONFORME':'CONFORME';bad=bad||nc;
+    items.filter(i=>!isConf(i)).forEach(i=>detalle.push({Componente:c.label,Codigo:i.cod,Descripcion_hallazgo:i.hall}));
+  }
+  return{hall,est,detalle,resultado:bad?'NO CONFORME':'CONFORME'};
+}
+
+/* ---------- CSV / JSON ---------- */
+function parseCSV(t){
+  if(t.charCodeAt(0)===0xFEFF)t=t.slice(1);
+  const first=t.split(/\r?\n/,1)[0];const d=first.split(';').length>first.split(',').length?';':',';
+  const rows=[];let row=[],f='',q=false;
+  for(let i=0;i<t.length;i++){
+    const c=t[i];
+    if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++;}else q=false;}else f+=c;}
+    else if(c==='"')q=true;
+    else if(c===d){row.push(f);f='';}
+    else if(c==='\n'||c==='\r'){if(c==='\r'&&t[i+1]==='\n')i++;row.push(f);f='';rows.push(row);row=[];}
+    else f+=c;
+  }
+  if(f!==''||row.length){row.push(f);rows.push(row);}
+  return rows;
+}
+function filasDe(text,name){
+  const tt=text.trim();
+  if(/\.json$/i.test(name)||tt[0]==='['||tt[0]==='{'){
+    const j=JSON.parse(tt);
+    return Array.isArray(j)?j:(j.value||j.items||j.pendientes||j.inspecciones||j.data||[]);
+  }
+  const rows=parseCSV(text).filter(r=>r.some(c=>String(c).trim()!==''));
+  if(!rows.length)return[];
+  const head=rows[0];
+  return rows.slice(1).map(r=>{const o={};head.forEach((k,i)=>o[k]=r[i]);return o;});
+}
+async function leerTexto(file){
+  const buf=await file.arrayBuffer();let t=new TextDecoder('utf-8').decode(buf);
+  if(t.includes('�'))t=new TextDecoder('windows-1252').decode(buf);
+  return t;
+}
+const val=v=>{if(v==null)return'';if(typeof v==='object')return String(v.Value??v.value??v.Title??'');return String(v).trim();};
+const PMAP={ordendeservicio:'orden',title:'orden',fechaejecucion:'fecha_ejec',medidorinstalado:'medidor',marca:'marca',cuadrilla:'cuadrilla',resultadoos:'resultado_os',observacionesos:'obs_os',supervisor:'supervisor',identificacion:'identificacion',nombreusuario:'usuario',celular:'celular',direccionpredio:'direccion',localidad:'localidad',sectorbarrio:'barrio',latitudy:'lat',longitudx:'lng',fechadeactualizacion:'fecha_act'};
+function normPend(o){
+  const p={};
+  for(const[k,v]of Object.entries(o)){const m=PMAP[n(k)];if(m&&!p[m])p[m]=val(v);}
+  if(p.orden)p.orden=p.orden.replace(/\.0+$/,'');
+  for(const k of['lat','lng'])if(p[k])p[k]=p[k].replace(',','.');
+  return p;
+}
+async function cargarPendientes(file){
+  try{
+    const rows=filasDe(await leerTexto(file),file.name);
+    const seen=new Set(),ok=[];let sin=0;
+    for(const r of rows){const p=normPend(r);if(!/^\d{5,}$/.test(p.orden||'')){sin++;continue;}if(seen.has(p.orden))continue;seen.add(p.orden);ok.push(p);}
+    if(!ok.length){toast('No encontré órdenes en ese archivo. Revisa que tenga la columna Orden_de_Servicio.');return;}
+    await dbClear('pend');for(const p of ok)await dbPut('pend',p);
+    S.pend=ok;S.pendFecha=new Date().toISOString();await dbPut('meta',S.pendFecha,'pendFecha');
+    const ya=ok.filter(p=>regDe(p.orden)).length;
+    toast(`Cargadas ${ok.length} ${ok.length===1?'orden':'órdenes'}`+(ya?` · ${ya} ya inspeccionadas por ti`:'')+(sin?` · ${sin} ${sin===1?'fila':'filas'} sin orden`:''));
+    go('pend');
+  }catch(e){console.error(e);toast('No pude leer ese archivo de pendientes.');}
+}
+async function cargarCatalogo(file){
+  try{
+    const rows=filasDe(await leerTexto(file),file.name);
+    const list=[];
+    for(const o of rows){
+      const g={};for(const[k,v]of Object.entries(o)){g[n(k)]=v;}
+      const hall=val(g.hallazgo??g.hallazgonoconformidad??Object.entries(g).find(([k])=>k.startsWith('hallazgo'))?.[1]);
+      if(!hall)continue;
+      list.push({cod:val(g.codigo||g.cdigo||g.id||g.title),comp:val(g.componente),hall,estado:val(g.estado),activo:val(g.activo)});
+    }
+    if(list.length<5||list.some(x=>!x.cod)){toast('Ese catálogo no tiene el formato esperado (CÓDIGO, COMPONENTE, HALLAZGO, ESTADO, ACTIVO).');return;}
+    setCatalogo(list);await dbPut('meta',list,'catalogo');
+    toast(`Catálogo actualizado · ${list.filter(i=>n(i.activo)==='si').length} hallazgos activos`);render();
+  }catch(e){console.error(e);toast('No pude leer ese catálogo.');}
+}
+function elegirArchivo(accept,cb){
+  const inp=h('input',{type:'file',accept,style:'position:fixed;left:-999px;opacity:0'});
+  inp.onchange=()=>{if(inp.files[0])cb(inp.files[0]);inp.remove();};
+  document.body.append(inp);inp.click();
+}
+
+/* ---------- ZIP (sin compresión) ---------- */
+const CRCT=(()=>{const t=new Uint32Array(256);for(let i=0;i<256;i++){let c=i;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[i]=c>>>0;}return t;})();
+const crc32=u=>{let c=0xFFFFFFFF;for(let i=0;i<u.length;i++)c=CRCT[(c^u[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0;};
+function makeZip(files){
+  const enc=new TextEncoder(),chunks=[],cd=[];let off=0;const d=new Date();
+  const time=(d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1),date=((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate();
+  for(const f of files){
+    const name=enc.encode(f.name),crc=crc32(f.data),len=f.data.length;
+    const lh=new DataView(new ArrayBuffer(30));
+    lh.setUint32(0,0x04034b50,true);lh.setUint16(4,20,true);lh.setUint16(6,0x0800,true);lh.setUint16(8,0,true);lh.setUint16(10,time,true);lh.setUint16(12,date,true);
+    lh.setUint32(14,crc,true);lh.setUint32(18,len,true);lh.setUint32(22,len,true);lh.setUint16(26,name.length,true);lh.setUint16(28,0,true);
+    chunks.push(lh.buffer,name,f.data);
+    const ch=new DataView(new ArrayBuffer(46));
+    ch.setUint32(0,0x02014b50,true);ch.setUint16(4,20,true);ch.setUint16(6,20,true);ch.setUint16(8,0x0800,true);ch.setUint16(10,0,true);ch.setUint16(12,time,true);ch.setUint16(14,date,true);
+    ch.setUint32(16,crc,true);ch.setUint32(20,len,true);ch.setUint32(24,len,true);ch.setUint16(28,name.length,true);ch.setUint32(42,off,true);
+    cd.push(ch.buffer,name);
+    off+=30+name.length+len;
+  }
+  const cdSize=cd.reduce((a,b)=>a+(b.byteLength!==undefined?b.byteLength:b.length),0);
+  const end=new DataView(new ArrayBuffer(22));
+  end.setUint32(0,0x06054b50,true);end.setUint16(8,files.length,true);end.setUint16(10,files.length,true);end.setUint32(12,cdSize,true);end.setUint32(16,off,true);
+  return new Blob([...chunks,...cd,end.buffer],{type:'application/zip'});
+}
+
+/* ---------- registro y reglas de duplicados ---------- */
+const idDe=(orden,sup)=>`${orden}_${slug(sup)}`;
+const regDe=orden=>S.ejec.find(e=>e.orden===orden&&e.supervisor===S.sup);
+const misEjec=()=>S.ejec.filter(e=>e.supervisor===S.sup).sort((a,b)=>b.actualizado.localeCompare(a.actualizado));
+function pendVisibles(){
+  const sinReg=S.pend.filter(p=>!regDe(p.orden));
+  const hayAsig=S.pend.some(p=>p.supervisor);
+  const mias=sinReg.filter(p=>!p.supervisor||n(p.supervisor)===n(S.sup));
+  const base=(S.todas||!hayAsig)?sinReg:mias;
+  return{lista:base,ocultasReg:S.pend.length-sinReg.length,deOtros:sinReg.length-mias.length,hayAsig};
+}
+
+/* ---------- interfaz base ---------- */
+let toastT;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3800);}
+function modal({title,content,buttons=[{id:'ok',text:'Aceptar',kind:'primary'}],dismissable=true}){
+  return new Promise(res=>{
+    const dlg=$('#dlg');
+    dlg.replaceChildren(h('div',{class:'dlgbox'},title&&h('h3',null,title),content,
+      h('div',{class:'dlgbtns'},buttons.map(b=>h('button',{class:'btn '+(b.kind||'ghost'),onclick:()=>{dlg.close();res(b.id);}},b.text)))));
+    dlg.oncancel=e=>{if(!dismissable)e.preventDefault();else res(null);};
+    dlg.showModal();
+  });
+}
+const confirmar=async(msg,ok='Aceptar',kind='primary',title)=>(await modal({title,content:h('p',null,msg),buttons:[{id:'no',text:'Cancelar'},{id:'ok',text:ok,kind}]}))==='ok';
+async function elegirSup(obligatorio){
+  const sel=h('select',{class:'sel'},SUPERVISORES.map(s=>h('option',{value:s},s)));
+  if(S.sup)sel.value=S.sup;
+  const r=await modal({title:'¿Quién inspecciona?',content:h('div',{style:'display:flex;flex-direction:column;gap:10px'},h('p',null,'Elige tu nombre. Se guarda en este celular.'),sel),
+    buttons:[...(obligatorio?[]:[{id:'no',text:'Cancelar'}]),{id:'ok',text:'Continuar',kind:'primary'}],dismissable:!obligatorio});
+  if(r==='ok'){S.sup=sel.value;S.todas=false;await dbPut('meta',S.sup,'supervisor');go('pend');}
+}
+async function menu(){
+  const act=(text,fn)=>h('button',{class:'btn ghost',onclick:()=>{$('#dlg').close();fn();}},text);
+  const nAct=S.cat.filter(i=>n(i.activo)==='si').length;
+  await modal({title:'Menú',content:h('div',{class:'menu'},
+    act('Cargar pendientes del día (CSV o JSON)',()=>elegirArchivo('.csv,.json,text/csv,application/json',cargarPendientes)),
+    act('Actualizar catálogo de hallazgos',()=>elegirArchivo('.csv,.json,text/csv,application/json',cargarCatalogo)),
+    act('Cambiar supervisor',()=>elegirSup(false)),
+    act(document.documentElement.dataset.theme==='dark'?'Tema claro':'Tema oscuro',()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem('gs-theme',t);}catch(e){}}),
+    h('p',{class:'muted',style:'font-size:12px;margin-top:6px'},`GS Calidad Técnica v${VERSION} · ${nAct} hallazgos activos en el catálogo`),
+    h('p',{class:'muted',style:'font-size:12px'},'Desarrollado por Heidi Díaz')),
+    buttons:[{id:'ok',text:'Cerrar'}]});
+}
+function go(v){
+  S.view=v;document.body.dataset.view=v;window.scrollTo(0,0);render();
+}
+function setHeader(){
+  const t={pend:['GS Calidad Técnica','Inspección de actividades ESPT'],ejec:['Ejecutadas','Inspecciones realizadas por ti'],env:['Enviar','Un solo zip con datos y fotos'],form:['','']}[S.view];
+  $('#ttl').textContent=t[0];$('#sub').textContent=t[1];
+  $('#supName').textContent=S.sup||'—';
+  $('.logo').style.display=S.view==='form'?'none':'';
+  $('#ttl').parentElement.style.display=S.view==='form'?'none':'';
+}
+function renderTabs(){
+  const pv=pendVisibles().lista.length,ej=misEjec().filter(e=>e.estado==='ejecutada').length;
+  const tab=(k,label,cnt)=>h('button',{class:'tab'+(S.view===k?' on':''),onclick:()=>go(k),'aria-label':label},h('span',{html:ICON[k]}),label,cnt>0&&h('span',{class:'n'},cnt));
+  $('#tabs').replaceChildren(tab('pend','Pendientes',pv),tab('ejec','Ejecutadas',misEjec().length),tab('env','Enviar',ej));
+}
+function render(){
+  setHeader();renderTabs();
+  const m=$('#main');m.replaceChildren();
+  if(S.view==='pend')vistaPend(m);else if(S.view==='ejec')vistaEjec(m);else if(S.view==='env')vistaEnv(m);else if(S.view==='form')vistaForm(m);
+}
+
+/* ---------- vistas ---------- */
+function vistaPend(m){
+  const{lista,ocultasReg,deOtros,hayAsig}=pendVisibles();
+  if(!S.pend.length){
+    m.append(h('div',{class:'empty'},h('b',null,'Aún no hay pendientes'),h('span',null,'Carga el archivo de pendientes del día (CSV o JSON) para empezar.'),
+      h('button',{class:'btn primary',onclick:()=>elegirArchivo('.csv,.json,text/csv,application/json',cargarPendientes)},'Cargar pendientes')),creditos());
+    return;
+  }
+  const q=n(S.q);
+  const vis=q?lista.filter(p=>n([p.orden,p.direccion,p.usuario,p.barrio,p.localidad,p.identificacion].join(' ')).includes(q)):lista;
+  const inp=h('input',{type:'search',placeholder:'Buscar por dirección, orden o usuario…',value:S.q,'aria-label':'Buscar'});
+  inp.oninput=()=>{S.q=inp.value;const pos=inp.selectionStart;vistaLista();};
+  m.append(h('label',{class:'search'},ic('search'),inp));
+  const sumEl=h('div',{class:'sum'});const listEl=h('div',{style:'display:flex;flex-direction:column;gap:9px'});
+  m.append(sumEl,listEl,creditos());
+  function vistaLista(){
+    const q2=n(S.q);
+    const v2=q2?lista.filter(p=>n([p.orden,p.direccion,p.usuario,p.barrio,p.localidad,p.identificacion].join(' ')).includes(q2)):lista;
+    sumEl.replaceChildren(h('span',null,h('b',null,`${lista.length} pendientes`),S.pendFecha?` · cargados ${new Date(S.pendFecha).toLocaleDateString('es-CO',{day:'numeric',month:'short'})}`:''),
+      h('span',null,ocultasReg>0?`${ocultasReg} ya inspeccionadas (ocultas)`:'',
+        hayAsig&&(deOtros>0||S.todas)?h('span',null,ocultasReg>0?' · ':'',h('button',{onclick:()=>{S.todas=!S.todas;render();}},S.todas?'Ver solo mías':`${deOtros} de otros supervisores · ver todas`)):null));
+    listEl.replaceChildren(...(v2.length?v2.sort((a,b)=>(a.direccion||'').localeCompare(b.direccion||'','es')).map(p=>
+      h('button',{class:'card item',onclick:()=>abrirPend(p.orden)},
+        h('div',{style:'min-width:0'},h('div',{class:'a'},p.direccion||'(sin dirección)'),
+          h('div',{class:'b'},`OS ${p.orden}`,p.barrio?` · ${p.barrio}`:'',p.localidad?` · ${p.localidad}`:'',S.todas&&p.supervisor?` · ${p.supervisor}`:'')),
+        h('span',{class:'go'},'›'))):[h('div',{class:'empty'},h('b',null,q2?'Sin resultados':'No tienes pendientes'),h('span',null,q2?'Prueba con otra dirección o número de orden.':(hayAsig&&deOtros>0?'Hay órdenes asignadas a otros supervisores: toca «ver todas».':'Todo al día.')))]));
+  }
+  vistaLista();
+}
+const creditos=()=>h('div',{class:'credit'},'Desarrollado por Heidi Díaz');
+const fechaCorta=iso=>{try{return new Date(iso+(iso.length===10?'T00:00:00':'')).toLocaleDateString('es-CO',{day:'numeric',month:'short',year:'numeric'});}catch(e){return iso;}};
+function vistaEjec(m){
+  const list=misEjec();
+  if(!list.length){m.append(h('div',{class:'empty'},h('b',null,'Aún no hay inspecciones'),h('span',null,'Las que guardes aparecerán aquí hasta que las envíes.')),creditos());return;}
+  m.append(...list.map(r=>h('button',{class:'card item',onclick:()=>abrirEjec(r.id)},
+    h('div',{style:'min-width:0'},h('div',{class:'a'},r.datos.direccion||'(sin dirección)'),
+      h('div',{class:'b'},`OS ${r.orden} · ${fechaCorta(r.fecha)}`),
+      h('div',{style:'margin-top:6px;display:flex;gap:6px;flex-wrap:wrap'},h('span',{class:'badge '+(r.res.resultado==='CONFORME'?'ok':'bad')},r.res.resultado),h('span',{class:'badge warn'},r.estado==='exportada'?'Exportada · bloqueada':'Pendiente de envío'))),
+    h('span',{class:'go'},'›'))),creditos());
+}
+function vistaEnv(m){
+  const mine=misEjec(),listas=mine.filter(e=>e.estado==='ejecutada'),ya=mine.filter(e=>e.estado==='exportada');
+  if(!S.selEnv)S.selEnv=new Set();
+  for(const r of listas)if(!S.selEnv._init?.has(r.id)){(S.selEnv._init??=new Set()).add(r.id);S.selEnv.add(r.id);}
+  const fila=r=>{const on=S.selEnv.has(r.id);
+    return h('button',{class:'card row',style:'text-align:left;width:100%'+(r.estado==='exportada'?';opacity:.8':''),onclick:()=>{on?S.selEnv.delete(r.id):S.selEnv.add(r.id);render();}},
+      h('span',{class:'cb'+(on?' on':'')}),
+      h('div',{style:'flex:1;min-width:0'},h('div',{style:'font:700 14px var(--f-head)'},r.datos.direccion||'(sin dirección)'),
+        h('div',{style:'font-size:12px;color:var(--muted);margin-top:2px'},`OS ${r.orden}`,r.fotosN?` · ${r.fotosN} fotos`:'',r.estado==='exportada'?` · exportada ${fechaCorta((r.exportado||'').slice(0,10))}`:'')),
+      h('span',{class:'badge '+(r.res.resultado==='CONFORME'?'ok':'bad')},r.res.resultado));};
+  const ids=[...S.selEnv].filter(id=>mine.some(r=>r.id===id));
+  m.append(h('div',{class:'h2'},`Listas para enviar · ${listas.length}`));
+  m.append(...(listas.length?listas.map(fila):[h('div',{class:'empty',style:'padding:18px'},h('span',null,'No tienes inspecciones pendientes de envío.'))]));
+  if(ya.length){m.append(h('div',{class:'h2'},'Ya exportadas'),...ya.map(fila));}
+  m.append(h('div',{class:'card'},h('div',{class:'muted',style:'font-size:12px'},'Nombre del archivo'),h('div',{class:'fname'},`${slug(S.sup)}_${hoy()}.zip`)));
+  m.append(h('div',{class:'savebar'},h('button',{class:'btn primary block',disabled:!ids.length,onclick:()=>exportar(ids)},`Generar zip${ids.length?` (${ids.length} ${ids.length===1?'inspección':'inspecciones'})`:''}`)),creditos());
+}
+
+/* ---------- formulario ---------- */
+async function abrirPend(orden){
+  const ex=regDe(orden);
+  if(ex){toast(`Ya la inspeccionaste el ${fechaCorta(ex.fecha)}.`);return abrirEjec(ex.id);}
+  const p=S.pend.find(x=>x.orden===orden);if(!p)return;
+  S.F={id:idDe(orden,S.sup),orden,p,sel:defaultSel(),obs:'',fotos:[],removed:[],nuevas:[],open:{},ro:false,dirty:false,existing:null};
+  entrarForm();
+}
+async function abrirEjec(id){
+  const r=S.ejec.find(e=>e.id===id);if(!r)return;
+  const sel=defaultSel();
+  for(const c of COMPS){const ok=(r.sel[c.k]||[]).filter(x=>S.byCod[x]);if(ok.length)sel[c.k]=ok;}
+  const fotos=(await fotosDe(id)).sort((a,b)=>a.name.localeCompare(b.name)).map(f=>({...f,url:URL.createObjectURL(f.blob)}));
+  S.F={id,orden:r.orden,p:r.datos,sel,obs:r.obs||'',fotos,removed:[],nuevas:[],open:{},ro:r.estado==='exportada',dirty:false,existing:r};
+  entrarForm();
+}
+function entrarForm(){$('#toast').hidden=true;history.pushState({form:1},'');go('form');}
+async function salirForm(forzar){
+  if(!forzar&&S.F.dirty&&!(await confirmar('Tienes cambios sin guardar. ¿Salir de todos modos?','Salir','danger')))return false;
+  for(const id of S.F.nuevas){await dbDel('fotos',id).catch(()=>{});}
+  S.F.fotos.forEach(f=>URL.revokeObjectURL(f.url));S.F=null;go(S.volver||'pend');return true;
+}
+window.addEventListener('popstate',async()=>{
+  if(S.view==='form'&&S.F){
+    if(S.F.dirty){history.pushState({form:1},'');await salirForm(false).then(ok=>{if(ok)history.back?.call;});}
+    else await salirForm(true);
+  }
+});
+async function atras(){
+  if(S.F.dirty&&!(await confirmar('Tienes cambios sin guardar. ¿Salir de todos modos?','Salir','danger')))return;
+  S.F.dirty=false;history.back();
+}
+function vistaForm(m){
+  const F=S.F,p=F.p;
+  m.append(h('div',{class:'fhead'},h('button',{class:'back',onclick:atras},ic('back'),'Volver'),
+    h('span',{class:'badge warn'},F.ro?'EXPORTADA · SOLO LECTURA':`EN INSPECCIÓN · ${fechaCorta(F.existing?F.existing.fecha:hoy())}`)));
+  const mapa=p.lat&&p.lng&&!isNaN(+p.lat)&&!isNaN(+p.lng)?h('a',{href:`https://www.google.com/maps?q=${p.lat},${p.lng}`,target:'_blank',rel:'noopener'},`${p.lat}, ${p.lng}`):null;
+  const campo=(l,v)=>v?h('div',null,l,h('b',null,v)):null;
+  m.append(h('section',{class:'card'},h('div',{style:'font:800 16px var(--f-head);overflow-wrap:anywhere'},p.direccion||'(sin dirección)'),
+    h('div',{class:'grid'},
+      campo('Orden',p.orden),campo('Usuario',p.usuario),campo('Identificación',p.identificacion),
+      p.celular?h('div',null,'Celular',h('b',null,h('a',{href:'tel:'+p.celular},p.celular))):null,
+      campo('Barrio',[p.barrio,p.localidad].filter(Boolean).join(' · ')),campo('Medidor instalado',[p.medidor,p.marca].filter(Boolean).join(' · ')),
+      campo('Cuadrilla',p.cuadrilla),campo('Supervisor asignado',p.supervisor),campo('Fecha de ejecución',p.fecha_ejec),
+      mapa?h('div',null,'Coordenadas',h('b',null,mapa)):null),
+    p.obs_os?h('details',null,h('summary',null,'Observaciones de la OS'),h('p',null,p.obs_os)):null));
+  for(const c of COMPS)m.append(compCard(c));
+  const ta=h('textarea',{class:'obs',placeholder:'Observaciones de la inspección (opcional)',disabled:F.ro});
+  ta.value=F.obs;ta.oninput=()=>{F.obs=ta.value;F.dirty=true;};
+  m.append(h('section',{class:'card'},h('h3',{style:'font:800 15px var(--f-head)'},'Observaciones'),ta));
+  const bar=h('div',{class:'savebar'});
+  if(F.ro){
+    bar.append(h('button',{class:'btn primary block',onclick:reabrir},'Reabrir para corregir'));
+  }else{
+    bar.append(h('button',{class:'btn primary block',onclick:guardar},'Guardar inspección'));
+    if(F.existing)bar.append(h('button',{class:'btn danger block',onclick:eliminar},'Eliminar inspección'));
+  }
+  m.append(bar);
+}
+function compCard(c){
+  const F=S.F,card=h('section',{class:'card comp'});
+  const draw=()=>{
+    const codes=F.sel[c.k],est=estadoDe(codes),open=!!F.open[c.k];
+    const fs=F.fotos.filter(f=>f.comp===c.k);
+    card.replaceChildren(...[
+      h('div',{class:'hd'},h('h3',null,c.label),h('span',{class:'badge '+(est==='CONFORME'?'ok':'bad')},est)),
+      h('div',{class:'chips'},codes.map(cd=>h('span',{class:'chip'+(isConf(S.byCod[cd])?'':' bad')},S.byCod[cd].hall))),
+      F.ro?null:h('button',{class:'link',style:'margin-top:8px',onclick:()=>{F.open[c.k]=!open;draw();}},open?'Cerrar lista':'Cambiar / agregar hallazgos'),
+      open?h('div',{class:'opts'},S.byComp[c.k].map(it=>{const on=codes.includes(it.cod);
+        return h('button',{class:'opt'+(on?' on':''),'aria-pressed':on,onclick:()=>{toggle(c.k,it.cod);draw();}},h('span',{class:'box'}),it.hall);})):null,
+      h('div',{class:'photos'},fs.map(f=>h('div',{class:'th'},h('img',{src:f.url,alt:'Foto '+c.label}),F.ro?null:h('button',{class:'x','aria-label':'Quitar foto',onclick:()=>quitarFoto(f,draw)},'×'))),
+        F.ro?null:[h('button',{class:'pbtn',onclick:()=>fotos(c.k,true,draw)},ic('cam'),'Cámara'),h('button',{class:'pbtn',onclick:()=>fotos(c.k,false,draw)},ic('img'),'Galería')])].filter(Boolean));
+  };
+  draw();return card;
+}
+async function reducir(file){
+  const MAX=1400;let bmp;
+  try{bmp=await createImageBitmap(file,{imageOrientation:'from-image'});}
+  catch(e){bmp=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=URL.createObjectURL(file);});}
+  const w=bmp.width||bmp.naturalWidth,hh=bmp.height||bmp.naturalHeight,k=Math.min(1,MAX/Math.max(w,hh));
+  const cv=document.createElement('canvas');cv.width=Math.round(w*k);cv.height=Math.round(hh*k);
+  cv.getContext('2d').drawImage(bmp,0,0,cv.width,cv.height);
+  return new Promise(res=>cv.toBlob(res,'image/jpeg',.72));
+}
+function fotos(comp,camara,redraw){
+  const inp=h('input',{type:'file',accept:'image/*',multiple:!camara,style:'position:fixed;left:-999px;opacity:0'});
+  if(camara)inp.setAttribute('capture','environment');
+  inp.onchange=async()=>{
+    for(const file of inp.files){
+      try{
+        const blob=await reducir(file),F=S.F;let i=1,name;
+        const usados=new Set(F.fotos.map(f=>f.name));
+        do{name=`${F.orden}_${slug(S.sup)}_${comp}_${String(i++).padStart(2,'0')}.jpg`;}while(usados.has(name));
+        const id=`${F.id}#${Date.now().toString(36)}${Math.random().toString(36).slice(2,6)}`;
+        const reg={id,insp:F.id,comp,name,blob};
+        await dbPut('fotos',reg);F.nuevas.push(id);F.fotos.push({...reg,url:URL.createObjectURL(blob)});F.dirty=true;
+      }catch(e){console.error(e);toast('No pude procesar una de las fotos.');}
+    }
+    inp.remove();redraw();
+  };
+  document.body.append(inp);inp.click();
+}
+async function quitarFoto(f,redraw){
+  const F=S.F;F.fotos=F.fotos.filter(x=>x.id!==f.id);URL.revokeObjectURL(f.url);
+  if(F.nuevas.includes(f.id)){F.nuevas=F.nuevas.filter(x=>x!==f.id);await dbDel('fotos',f.id);}else F.removed.push(f.id);
+  F.dirty=true;redraw();
+}
+async function guardar(){
+  const F=S.F,res=compute(F.sel);
+  if(res.resultado==='NO CONFORME'&&F.fotos.length===0&&!(await confirmar('Hay hallazgos y no tomaste fotos de evidencia. ¿Guardar de todas formas?','Guardar')))return;
+  const ahora=new Date().toISOString();
+  const rec={id:F.id,orden:F.orden,supervisor:S.sup,supervisor_asignado:F.p.supervisor||'',fecha:F.existing?F.existing.fecha:hoy(),creado:F.existing?F.existing.creado:ahora,actualizado:ahora,
+    estado:'ejecutada',datos:F.p,sel:F.sel,obs:F.obs.trim(),res,fotosN:F.fotos.length};
+  await dbPut('ejec',rec);
+  for(const id of F.removed)await dbDel('fotos',id);
+  const i=S.ejec.findIndex(e=>e.id===rec.id);if(i>=0)S.ejec[i]=rec;else S.ejec.push(rec);
+  S.selEnv?._init?.delete(rec.id);
+  F.dirty=false;F.nuevas=[];toast('Inspección guardada');
+  await salirForm(true);history.back();
+}
+async function eliminar(){
+  const F=S.F;
+  if(!(await confirmar('Se borra esta inspección y sus fotos. La orden vuelve a Pendientes.','Eliminar','danger','¿Eliminar inspección?')))return;
+  for(const f of await fotosDe(F.id))await dbDel('fotos',f.id);
+  await dbDel('ejec',F.id);S.ejec=S.ejec.filter(e=>e.id!==F.id);S.selEnv?.delete(F.id);
+  F.dirty=false;toast('Inspección eliminada');await salirForm(true);history.back();
+}
+async function reabrir(){
+  const F=S.F;
+  if(!(await confirmar('Esta inspección ya se exportó. Si la corriges tendrás que volver a enviarla y podría quedar duplicada en SharePoint hasta que se revise.','Reabrir','primary','¿Reabrir inspección?')))return;
+  const r=S.ejec.find(e=>e.id===F.id);r.estado='ejecutada';await dbPut('ejec',r);F.ro=false;F.existing=r;render();
+}
+
+/* ---------- exportar ---------- */
+function paraExportar(r,fotos){
+  const d=r.datos;
+  return{IdInspeccion:r.id,Title:r.orden,Fecha_Inspeccion:r.fecha,Supervisor:r.supervisor,Supervisor_asignado:r.supervisor_asignado||'',
+    ...Object.fromEntries(COMPS.map(c=>['Hallazgos_'+c.k,r.res.hall['Hallazgos_'+c.k]])),
+    ...Object.fromEntries(COMPS.map(c=>['Estado_'+c.k,r.res.est['Estado_'+c.k]])),
+    Resultado_inspeccion:r.res.resultado,Observaciones_inspeccion:r.obs||'',
+    Direccion:d.direccion||'',Medidor_Instalado:d.medidor||'',Localidad:d.localidad||'',
+    Fotos:fotos,
+    Hallazgos_detalle:r.res.detalle.map(x=>({IdHallazgo:`${r.id}_${x.Codigo}`,IdInspeccion:r.id,Orden_de_Servicio:r.orden,...x}))};
+}
+async function exportar(ids){
+  try{
+    const recs=S.ejec.filter(e=>ids.includes(e.id)),files=[],items=[];
+    for(const r of recs){
+      const fs=(await fotosDe(r.id)).sort((a,b)=>a.name.localeCompare(b.name));
+      for(const f of fs)files.push({name:'fotos/'+f.name,data:new Uint8Array(await f.blob.arrayBuffer())});
+      items.push(paraExportar(r,fs.map(f=>f.name)));
+    }
+    const json={esquema:'GS_Calidad_Tecnica_ESPT_v1',app_version:VERSION,generado:new Date().toISOString(),supervisor:S.sup,total:items.length,inspecciones:items};
+    files.unshift({name:'inspecciones.json',data:new TextEncoder().encode(JSON.stringify(json,null,2))});
+    const blob=makeZip(files),nombre=`${slug(S.sup)}_${hoy()}.zip`;
+    const ahora=new Date().toISOString();
+    for(const r of recs){r.estado='exportada';r.exportado=ahora;await dbPut('ejec',r);}
+    render();
+    const file=new File([blob],nombre,{type:'application/zip'});
+    const puedeCompartir=navigator.canShare&&navigator.canShare({files:[file]});
+    const url=URL.createObjectURL(blob);
+    const descarga=()=>{const a=h('a',{href:url,download:nombre});document.body.append(a);a.click();a.remove();};
+    const btns=[{id:'ok',text:'Cerrar'}];
+    const content=h('div',{style:'display:flex;flex-direction:column;gap:10px'},
+      h('p',null,`${items.length} ${items.length===1?'inspección':'inspecciones'} · ${files.length-1} fotos`),h('div',{class:'fname'},nombre),
+      h('button',{class:'btn primary block',onclick:descarga},'Descargar zip'),
+      puedeCompartir?h('button',{class:'btn ghost block',onclick:()=>navigator.share({files:[file],title:nombre}).catch(()=>{})},'Compartir (WhatsApp, correo…)'):null,
+      h('p',{style:'font-size:12.5px'},'Sube el zip a la carpeta Entrada_Inspecciones de SharePoint.'));
+    await modal({title:'Zip listo',content,buttons:btns});
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+  }catch(e){console.error(e);toast('No pude generar el zip. Intenta con menos inspecciones.');}
+}
+
+/* ---------- arranque ---------- */
+async function init(){
+  await openDB();
+  const cat=await dbGet('meta','catalogo');setCatalogo(cat&&cat.length?cat:catBase());
+  S.sup=(await dbGet('meta','supervisor'))||null;
+  S.pendFecha=(await dbGet('meta','pendFecha'))||null;
+  S.pend=await dbAll('pend');S.ejec=await dbAll('ejec');
+  render();
+  $('#chipSup').onclick=()=>elegirSup(false);$('#btnMenu').onclick=menu;
+  if(!S.sup)elegirSup(true);
+  try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist();}catch(e){}
+  if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+init().catch(e=>{console.error(e);document.body.prepend(h('p',{style:'padding:20px'},'No se pudo iniciar el almacenamiento local de este navegador.'));});
+})();
+</script>
+</body>
+</html>

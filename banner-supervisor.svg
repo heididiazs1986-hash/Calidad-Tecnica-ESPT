@@ -1,28 +1,42 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372 170" preserveAspectRatio="xMidYMax slice" class="scene" role="img" aria-label="Supervisor con casco blanco en primer plano, con un poste y un medidor al fondo">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372 170" preserveAspectRatio="xMidYMax slice" class="scene" role="img" aria-label="Supervisor con casco blanco en primer plano, con casas, postes y medidor al fondo">
   <defs>
+    <linearGradient id="cielo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#79D1FF" stop-opacity=".85"/><stop offset=".55" stop-color="#79D1FF" stop-opacity=".30"/><stop offset="1" stop-color="#FEFEFF"/></linearGradient>
     <clipPath id="vestClip">
       <path d="M296 135 L311 135 L318 152 L318 170 L282 170 L282 155 Q282 138 296 135Z"/>
       <path d="M340 135 L325 135 L318 152 L318 170 L354 170 L354 155 Q354 138 340 135Z"/>
     </clipPath>
   </defs>
-  <!-- fondo: sol, cerros, casas, poste -->
-  <g transform="translate(0 22)">
-    <circle cx="150" cy="104" r="20" fill="#FF6600" opacity=".30"/>
-    <path d="M0 116 C60 90 110 106 170 94 C230 82 290 104 372 88 L372 148 L0 148Z" fill="#FF6600" opacity=".16"/>
-    <path d="M0 130 C70 108 130 126 200 114 C270 102 320 120 372 110 L372 148 L0 148Z" fill="#C1C7CE" opacity=".5"/>
-    <path d="M0 142 C80 128 150 140 230 134 C290 130 340 138 372 134 L372 148 L0 148Z" fill="#C1C7CE" opacity=".75"/>
-    <rect x="30" y="112" width="22" height="15" fill="#FEFEFF" opacity=".98"/><path d="M26 112 L41 100 L56 112Z" fill="#FF6600" opacity=".75"/><rect x="38" y="118" width="6" height="9" fill="#C1C7CE"/>
-    <rect x="62" y="117" width="17" height="11" fill="#FEFEFF" opacity=".98"/><path d="M59 117 L70.5 108 L82 117Z" fill="#FF6600" opacity=".75"/>
-    <rect x="96" y="119" width="14" height="9" fill="#FEFEFF" opacity=".95"/><path d="M93 119 L103 111 L113 119Z" fill="#FF6600" opacity=".6"/>
-    <path d="M205 88 Q165 102 128 92 M205 88 Q150 96 100 90" fill="none" stroke="#4A525A" stroke-width="1" opacity=".6"/>
-    <rect x="201" y="76" width="5" height="72" rx="1.5" fill="#4A525A"/>
-    <rect x="189" y="86" width="29" height="3.4" rx="1.5" fill="#3A4149"/>
-    <circle cx="191" cy="85" r="2.2" fill="#C1C7CE"/><circle cx="216" cy="85" r="2.2" fill="#C1C7CE"/>
-    <rect x="193" y="104" width="21" height="18" rx="3" fill="#FEFEFF" stroke="#C1C7CE" stroke-width="1.2"/>
-    <circle cx="203.5" cy="111" r="4.6" fill="#FEFEFF" stroke="#79D1FF" stroke-width="1.4"/>
-    <path d="M201.2 111.2l1.6 1.6 3-3.2" fill="none" stroke="#FF6600" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-    <rect x="197" y="117" width="13" height="2" rx="1" fill="#C1C7CE"/>
+  <rect width="372" height="170" fill="url(#cielo)"/>
+  <!-- sol y nubes -->
+  <circle cx="60" cy="116" r="34" fill="#FF6600" opacity=".22"/><circle cx="60" cy="116" r="23" fill="#FF6600"/>
+  <g fill="#FEFEFF"><ellipse cx="146" cy="108" rx="17" ry="6"/><ellipse cx="156" cy="103" rx="10" ry="6"/><ellipse cx="136" cy="104" rx="8" ry="5"/>
+  <ellipse cx="232" cy="96" rx="14" ry="5"/><ellipse cx="240" cy="92" rx="8" ry="5"/></g>
+  <!-- pájaros -->
+  <g fill="none" stroke="#3A4149" stroke-width="1.4" stroke-linecap="round"><path d="M196 92 q3 -4 6 0 q3 -4 6 0"/><path d="M212 84 q2.5 -3.4 5 0 q2.5 -3.4 5 0"/></g>
+  <!-- cerros -->
+  <path d="M0 122 C50 100 100 114 160 102 C220 90 280 108 372 94 L372 170 L0 170Z" fill="#C1C7CE"/>
+  <path d="M0 136 C70 114 130 132 200 120 C270 108 320 126 372 114 L372 170 L0 170Z" fill="#FF6600" opacity=".5"/>
+  <!-- casas -->
+  <g><rect x="16" y="120" width="30" height="20" fill="#FEFEFF"/><path d="M12 120 L31.0 101.4 L50 120Z" fill="#FF6600"/><rect x="20" y="125" width="7.8" height="6.4" rx="1" fill="#79D1FF"/><rect x="34.6" y="128.4" width="7.2" height="11.6" fill="#3A4149"/><rect x="54" y="126" width="24" height="16" fill="#FEFEFF"/><path d="M50 126 L66.0 111.1 L82 126Z" fill="#FF6600"/><rect x="58" y="131" width="6.2" height="5.1" rx="1" fill="#79D1FF"/><rect x="68.9" y="132.7" width="5.8" height="9.3" fill="#3A4149"/><rect x="86" y="128" width="20" height="14" fill="#FEFEFF"/><path d="M82 128 L96.0 115.6 L110 128Z" fill="#FF6600"/><rect x="90" y="133" width="5.2" height="4.5" rx="1" fill="#79D1FF"/><rect x="98.4" y="133.9" width="4.8" height="8.1" fill="#3A4149"/><rect x="112" y="131" width="15" height="10" fill="#FEFEFF"/><path d="M108 131 L119.5 121.7 L131 131Z" fill="#FF6600"/><rect x="121.3" y="135.2" width="3.6" height="5.8" fill="#3A4149"/></g>
+  <!-- cables y postes -->
+  <g fill="none" stroke="#3A4149" stroke-width="1.2" opacity=".75">
+    <path d="M168 92 Q130 106 96 98 M168 92 Q118 100 70 96"/>
+    <path d="M168 92 Q200 104 232 98 M168 94 Q205 108 232 100"/>
+    <path d="M232 98 Q262 106 300 100"/>
   </g>
+  <rect x="166" y="84" width="4.4" height="68" rx="1.4" fill="#4A525A"/>
+  <rect x="155" y="90" width="26" height="3.2" rx="1.4" fill="#3A4149"/>
+  <circle cx="157" cy="89" r="2" fill="#C1C7CE"/><circle cx="179" cy="89" r="2" fill="#C1C7CE"/><circle cx="168" cy="82" r="2" fill="#C1C7CE"/>
+  <rect x="174" y="98" width="12" height="17" rx="3.5" fill="#C1C7CE" stroke="#3A4149" stroke-width="1.2"/><rect x="174" y="103" width="12" height="2.2" fill="#3A4149"/>
+  <rect x="150" y="116" width="16" height="13" rx="2.6" fill="#FEFEFF" stroke="#C1C7CE" stroke-width="1.2"/>
+  <circle cx="158" cy="122.5" r="4.4" fill="#FEFEFF" stroke="#79D1FF" stroke-width="1.6"/>
+  <path d="M155.9 122.6l1.5 1.5 2.8 -3" fill="none" stroke="#FF6600" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="231" y="98" width="3.6" height="54" rx="1.2" fill="#4A525A"/><rect x="223" y="102" width="20" height="2.6" rx="1.2" fill="#3A4149"/>
+  <!-- suelo -->
+  <path d="M0 150 C80 138 150 150 230 144 C300 140 340 148 372 144 L372 170 L0 170Z" fill="#FF6600"/>
+  <path d="M0 160 C90 152 160 162 250 156 C310 153 346 158 372 156 L372 170 L0 170Z" fill="#3A4149" opacity=".22"/>
+  <!-- disco celeste detrás del supervisor -->
+  <circle cx="298" cy="152" r="54" fill="#79D1FF"/><circle cx="298" cy="152" r="44" fill="#FEFEFF" opacity=".4"/>
   <!-- supervisor en primer plano: cabeza y torso -->
   <g transform="translate(-20 0)">
     <!-- brazo que saluda -->
